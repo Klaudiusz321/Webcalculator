@@ -55,12 +55,12 @@ const MetricInputForm: React.FC<MetricInputFormProps> = ({ onResult }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
+    <form onSubmit={handleSubmit} style={formStyle}>
       <textarea
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
         rows={10}
-        style={{ width: "100%", padding: "0.5rem" }}
+        style={textareaStyle}
         placeholder={`Przykład:
 x, y ; a, tau, psi, theta, phi
 0 0 -c**2
@@ -70,6 +70,25 @@ x, y ; a, tau, psi, theta, phi
       <CalculateButton input={inputText} onCalculate={(res: MetricData) => onResult(res)} />
     </form>
   );
+};
+
+const formStyle: React.CSSProperties = {
+  width: "100%",
+  maxWidth: "600px",
+  margin: "0 auto",
+  padding: "1rem",
+  boxSizing: "border-box",
+};
+
+const textareaStyle: React.CSSProperties = {
+  width: "100%",
+  height: "200px",
+  padding: "1rem",
+  boxSizing: "border-box",
+  resize: "none",
+  fontSize: "16px",
+  fontFamily: "monospace",
+  marginBottom: "1rem",
 };
 
 export default MetricInputForm;

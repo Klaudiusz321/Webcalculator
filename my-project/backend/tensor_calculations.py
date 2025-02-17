@@ -211,6 +211,8 @@ def oblicz_tensory(wspolrzedne, metryka):
     Scalar_Curvature = custom_simplify(sum(g_inv[mu, nu] * Ricci[mu, nu] for mu in range(n) for nu in range(n)))
     Scalar_Curvature = custom_simplify(Scalar_Curvature)
 
+    print("Final expression for lambdify:", Scalar_Curvature)
+
     return g, Gamma, R_abcd, Ricci, Scalar_Curvature
 
 def compute_einstein_tensor(Ricci, Scalar_Curvature, g, g_inv, n):

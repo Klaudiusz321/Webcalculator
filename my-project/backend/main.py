@@ -8,7 +8,7 @@ from tensor_calculations import (
     generate_output
 )
 import sympy as sp
-from plotting import generate_plot_base64
+
 
 app = FastAPI()
 
@@ -36,9 +36,16 @@ async def calculate(metric_request: MetricRequest):
         # TUTAJ dodajemy konwersję wyniku na LaTeX:
         scalar_curv_latex = sp.latex(Scalar_Curvature)
 
+        # Add debugging for Scalar_Curvature
+        print(f"Scalar_Curvature type: {type(Scalar_Curvature)}")
+        print(f"Scalar_Curvature value: {Scalar_Curvature}")
+        print(f"wspolrzedne: {wspolrzedne}")
+        
+        # Generate plot with error handling
+        
+       
         # Generujemy raport tekstowy (opcjonalnie)
         report = generate_output(g, Gamma, R_abcd, Ricci, Scalar_Curvature, G_upper, G_lower, len(wspolrzedne))
-        plot_image_base64 = generate_plot_base64(Scalar_Curvature, wspolrzedne)
         return {
             "outputText": report,
             "scalarCurvatureLatex": scalar_curv_latex,
@@ -46,9 +53,9 @@ async def calculate(metric_request: MetricRequest):
             "parameters": [str(p) for p in parametry],
             "metryka": {f"{k[0]},{k[1]}": str(expr) for k, expr in metryka.items()},
             "scalarCurvature": str(Scalar_Curvature),
-            "plot": plot_image_base64,
             
         }
 
     except Exception as e:
+        print(f"Error in calculate endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))

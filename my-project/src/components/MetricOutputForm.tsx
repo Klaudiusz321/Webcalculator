@@ -1,7 +1,7 @@
 import React from "react";
 import LatexDisplay from "./LatexDisplay"; // upewnij się, że ścieżka jest poprawna
 import { MetricData } from "./MetricInputForm";
-import GraphicalResult from "./GraphicalResultProps";
+
 
 interface MetricOutputFormProps {
   result: MetricData;
@@ -64,12 +64,7 @@ const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
           <p>{result.Ricci}</p>
         </div>
       )}
-      {result.plot && (
-        <div>
-          
-          <GraphicalResult plot={result.plot} />
-        </div>
-      )}
+      
 
      
       {result.scalarCurvatureLatex && (
