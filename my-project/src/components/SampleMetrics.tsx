@@ -1,21 +1,21 @@
 import React from "react";
 
-// Definiujemy interfejs dla metryki
+// Defining interface for a metric
 export interface Metric {
   id: number;
   name: string;
   shortDescription: string;
   metricText: string;
-  // Jeśli masz już pre-generowane wykresy jako Base64, możesz dodać:
+  // Optional plot data as Base64
   plot?: string;
 }
 
-// Przykładowa lista metryk
+// Sample metrics list
 export const sampleMetrics: Metric[] = [
   {
     id: 1,
     name: "Schwarzschild Vacuum Spacetime",
-    shortDescription: "Standardowa metryka Schwarzschilda.",
+    shortDescription: "Standard Schwarzschild metric for spherically symmetric vacuum solution.",
     metricText: `
 t, r, theta, phi;
 
@@ -24,27 +24,25 @@ t, r, theta, phi;
 2 2 r^2
 3 3 r^2*sin(theta)**2
 `,
-    // Możesz wstawić tutaj wygenerowany Base64 obraz (jeśli masz) lub zostawić puste
     plot: "" 
   },
   {
     id: 2,
     name: "The Three-Sphere",
-    shortDescription: "Metryka sfery trójwymiarowej.",
+    shortDescription: "Metric of a three-dimensional sphere embedded in 4D space.",
     metricText: `
 theta, phi, psi; a
 
 0 0 a**2*sin(psi)**2
 1 1 a**2*sin(psi)**2*sin(theta)**2
 2 2 a**2
-
 `,
     plot: ""
   },
   {
     id: 3,
     name: "Four-Dimensional de Sitter Spacetime",
-    shortDescription: "Metryka de Sitter 4D.",
+    shortDescription: "De Sitter metric describing an expanding universe with positive cosmological constant.",
     metricText: `
 tau, psi, theta, phi; a
 
@@ -52,27 +50,25 @@ tau, psi, theta, phi; a
 1 1 a**2*cosh(tau)**2
 2 2 a**2*cosh(tau)**2*sin(psi)**2
 3 3 a**2*cosh(tau)**2*sin(psi)**2*sin(theta)**2
-
 `,
     plot: ""
   },
   {
     id: 4,
     name: "Metric Torus in Euclidean Space",
-    shortDescription: "Metryka torusa w przestrzeni euklidesowej.",
+    shortDescription: "Standard metric of a torus embedded in three-dimensional Euclidean space.",
     metricText: `
 theta, phi; a, b
 
 0 0 b**2
 1 1 (a + b*cos(theta))**2
-
 `,
     plot: ""
   },
   {
     id: 5,
     name: "The Pseudosphere in Euclidean Space",
-    shortDescription: "Pseudosfera – powierzchnia o ujemnej krzywiźnie.",
+    shortDescription: "Metric of a pseudosphere - a surface of constant negative curvature.",
     metricText: `
 x, y; a
 
@@ -80,14 +76,13 @@ x, y; a
 0 1 x*y * (a**2 - x**2 - y**2) / ((x**2 + y**2)**2)
 1 0 x*y * (a**2 - x**2 - y**2) / ((x**2 + y**2)**2)
 1 1 y**2 * (a**2 - x**2 - y**2) / ((x**2 + y**2)**2)
-
 `,
     plot: ""
   },
   {
     id: 6,
     name: "FLRW Cosmological Spacetimes",
-    shortDescription: "Metryki FLRW dla kosmologii.",
+    shortDescription: "Friedmann-Lemaître-Robertson-Walker metric for cosmological models.",
     metricText: `
 t, chi, theta, phi;
 
@@ -102,32 +97,91 @@ t, chi, theta, phi;
 
 const SampleMetrics: React.FC = () => {
   return (
-    <div>
-      <h2>Przykładowe Metryki</h2>
-      <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-          gap: "1rem"
-        }}>
+    <div style={containerStyle}>
+      <h2 style={titleStyle}>Sample Metrics</h2>
+      <div style={gridContainerStyle}>
         {sampleMetrics.map(metric => (
-          <div key={metric.id} style={{
-              border: "1px solid #ccc",
-              padding: "1rem",
-              borderRadius: "4px",
-              backgroundColor: "#1a1a1a"
-            }}>
-            <h3>{metric.name}</h3>
-            <p>{metric.shortDescription}</p>
-            <pre style={{ padding: "0.5rem", overflowX: "auto" }}>
+          <div key={metric.id} style={gridItemStyle}>
+            <h3 style={headingStyle}>{metric.name}</h3>
+            <p style={descriptionStyle}>{metric.shortDescription}</p>
+            <pre style={codeStyle}>
               {metric.metricText}
             </pre>
-            {/* Jeśli pole "plot" zawiera wygenerowany Base64 obraz, wyświetl go: */}
-            
           </div>
         ))}
       </div>
     </div>
   );
+};
+
+const containerStyle: React.CSSProperties = {
+  width: "100%",
+  maxWidth: "1200px",
+  margin: "0 auto",
+  padding: "clamp(1rem, 4vw, 2rem)",
+  boxSizing: "border-box",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+};
+
+const titleStyle: React.CSSProperties = {
+  textAlign: "center",
+  marginBottom: "clamp(1.5rem, 4vw, 2rem)",
+  fontSize: "clamp(1.5rem, 5vw, 2rem)",
+  color: "white",
+};
+
+const gridContainerStyle: React.CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))",
+  gap: "clamp(1rem, 3vw, 2rem)",
+  width: "100%",
+  padding: "0.5rem",
+  justifyItems: "center",
+};
+
+const gridItemStyle: React.CSSProperties = {
+  padding: "clamp(1rem, 3vw, 1.5rem)",
+  border: "1px solid rgba(255, 255, 255, 0.1)",
+  borderRadius: "8px",
+  backgroundColor: "#1a1a1a",
+  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+  color: "white",
+  width: "100%",
+  margin: "0 auto",
+  boxSizing: "border-box",
+  textAlign: "center",
+};
+
+const headingStyle: React.CSSProperties = {
+  fontSize: "clamp(1.2rem, 4vw, 1.5rem)",
+  marginBottom: "1rem",
+  color: "white",
+  fontWeight: "500",
+};
+
+const descriptionStyle: React.CSSProperties = {
+  fontSize: "clamp(0.875rem, 1vw, 1rem)",
+  marginBottom: "1rem",
+  lineHeight: "1.5",
+  color: "rgba(255, 255, 255, 0.8)",
+};
+
+const codeStyle: React.CSSProperties = {
+  padding: "1rem",
+  backgroundColor: "#242424",
+  borderRadius: "4px",
+  overflowX: "auto",
+  fontFamily: "monospace",
+  fontSize: "clamp(0.75rem, 1vw, 0.9rem)",
+  lineHeight: "1.4",
+  whiteSpace: "pre-wrap",
+  wordBreak: "break-word",
+  border: "1px solid rgba(255, 255, 255, 0.05)",
+  color: "rgba(255, 255, 255, 0.9)",
+  textAlign: "left",
+  margin: "0 auto",
 };
 
 export default SampleMetrics;

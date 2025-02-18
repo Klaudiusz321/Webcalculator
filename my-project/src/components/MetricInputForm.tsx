@@ -12,6 +12,10 @@ export interface MetricData {
   Ricci: any[];
   scalarCurvature: string;
   scalarCurvatureLatex: string;  // Nowe pole do przechowywania LaTeX-a
+  christoffelLatex: string[];
+  riemannLatex: string[];
+  ricciLatex: string[];
+  einsteinLatex: string[];
   outputText?: string;
   plotImage?: string;
   plot?: string; 

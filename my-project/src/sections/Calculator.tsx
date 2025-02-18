@@ -37,13 +37,12 @@ const CurvatureCalculator: React.FC = () => {
 };
 
 const containerStyle: React.CSSProperties = {
-  padding: "1rem",
+  padding: "clamp(1rem, 2vw, 2rem)",
   width: "100%",
   minHeight: "100vh",
   boxSizing: "border-box",
   display: "flex",
   flexDirection: "column",
-  
 };
 
 const mainStyle: React.CSSProperties = {
@@ -51,28 +50,35 @@ const mainStyle: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
+  gap: "clamp(1rem, 3vw, 2rem)",
+  width: "100%",
+  maxWidth: "1400px",
+  margin: "0 auto",
 };
 
 const inputSectionStyle: React.CSSProperties = {
   width: "100%",
   maxWidth: "800px",
-  padding: "1rem",
+  padding: "clamp(0.75rem, 2vw, 1.5rem)",
 };
 
 const outputSectionStyle: React.CSSProperties = {
   width: "100%",
   maxWidth: "800px",
-  padding: "1rem",
-};
-
-const headingStyle: React.CSSProperties = {
-  textAlign: "center",
-  marginBottom: "1rem",
+  padding: "clamp(0.75rem, 2vw, 1.5rem)",
 };
 
 const sampleSectionStyle: React.CSSProperties = {
   width: "100%",
-  padding: "1rem",
+  maxWidth: "1200px",
+  padding: "clamp(1rem, 2vw, 2rem)",
+  margin: "0 auto",
+};
+
+const headingStyle: React.CSSProperties = {
+  textAlign: "center",
+  marginBottom: "clamp(1rem, 2vw, 2rem)",
+  fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
 };
 
 export default CurvatureCalculator;
