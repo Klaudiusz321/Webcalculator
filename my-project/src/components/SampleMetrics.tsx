@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+import "../styles/SampleMetrics.scss";
+import { ContentCopy, Check } from "@mui/icons-material";
 
 // Defining interface for a metric
 export interface Metric {
@@ -96,16 +98,45 @@ t, chi, theta, phi;
 ];
 
 const SampleMetrics: React.FC = () => {
+
+    const [copied, setCopied] = useState(false);
+    const [copiedMetrics, setCopiedMetrics] = useState<{ [key: string]: boolean }>({});
+
+    const handleCopy = (text: string, id: string) => {
+        navigator.clipboard.writeText(text).then(() => {
+            setCopiedMetrics(prev => ({
+                ...prev,
+                [id]: true
+            }));
+            setTimeout(() => {
+                setCopiedMetrics(prev => ({
+                    ...prev,
+                    [id]: false
+                }));
+            }, 2000);
+        });
+    };
+
   return (
     <div style={containerStyle}>
       <h2 style={titleStyle}>Sample Metrics</h2>
       <div style={gridContainerStyle}>
         {sampleMetrics.map(metric => (
-          <div key={metric.id} style={gridItemStyle}>
+          <div key={metric.id} style={gridItemStyle} className="sample-metrics-card">
             <h3 style={headingStyle}>{metric.name}</h3>
             <p style={descriptionStyle}>{metric.shortDescription}</p>
-            <pre style={codeStyle}>
+            <pre style={codeStyle} className="sample-metrics-card__code">
               {metric.metricText}
+
+                <button 
+                className="sample-metrics-card__copy-btn" 
+                onClick={()=> handleCopy(metric.metricText, metric.id.toString())}
+                >
+                    <span className="sample-metrics-card__copy-btn-icon">
+                        {copiedMetrics[metric.id] ? <Check /> : <ContentCopy />}
+                    </span>
+                    {copiedMetrics[metric.id] ? ' Copied' : ' Copy'}
+                </button>
             </pre>
           </div>
         ))}
