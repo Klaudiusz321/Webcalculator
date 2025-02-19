@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import CalculateButton from "./CalculateButton";
 
-// Zaktualizowany interfejs MetricData z polem scalarCurvatureLatex
 export interface MetricData {
   coordinates: string[];
   parameters: string[];
@@ -15,6 +14,7 @@ export interface MetricData {
   outputText?: string;
   plotImage?: string;
   plot?: string;
+  // Dodane pola dla danych tensorowych
   g?: any[];
   Gamma?: any[];
   R_abcd?: any[];
@@ -39,55 +39,14 @@ const MetricInputForm: React.FC<MetricInputFormProps> = ({ onResult }) => {
     };
   };
 
-  const validateInput = (input: string): string | null => {
-    if (!input.trim()) {
-      return "Input cannot be empty";
-    }
-
-    const lines = input.trim().split('\n');
-    if (lines.length < 2) {
-      return "Input must contain at least coordinates/parameters line and one metric component";
-    }
-
-    // Sprawdź linię współrzędnych i parametrów
-    const coordParamLine = lines[0].trim();
-    if (!/^[a-zA-Z0-9\s,;]+$/.test(coordParamLine)) {
-      return "Coordinates and parameters line can only contain letters, numbers, commas, and semicolons";
-    }
-
-    // Sprawdź komponenty metryki
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line) continue;
-      if (!/^[0-9\s]+[-+*/().\sa-zA-Z0-9^]+$/.test(line)) {
-        return `Invalid metric component format at line ${i + 1}`;
-      }
-    }
-
-    return null;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const validationError = validateInput(inputText);
-    if (validationError) {
-      console.error(validationError);
-      return;
-    }
-
     try {
       const response = await fetch("http://localhost:8000/api/calculate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ metric_text: inputText }),
       });
-      
-      if (response.status === 429) {
-        alert("Too many requests. Please wait a minute before trying again.");
-        return;
-      }
-      
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.detail || "Wystąpił błąd podczas obliczeń.");
@@ -96,7 +55,6 @@ const MetricInputForm: React.FC<MetricInputFormProps> = ({ onResult }) => {
       onResult(filteredData);
     } catch (err) {
       console.error(err);
-      alert(err instanceof Error ? err.message : "An error occurred");
     }
   };
 
@@ -135,6 +93,10 @@ const textareaStyle: React.CSSProperties = {
   fontSize: "16px",
   fontFamily: "monospace",
   marginBottom: "1rem",
+  backgroundColor: "#242424",
+  color: "white",
+  border: "1px solid rgba(255, 255, 255, 0.1)",
+  borderRadius: "4px",
 };
 
 export default MetricInputForm;
