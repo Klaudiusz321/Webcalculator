@@ -294,5 +294,44 @@ def generate_output(g, Gamma, R_abcd, Ricci, Scalar_Curvature, G_upper, G_lower,
 
     return "\n".join(lines)
 
+def generate_christoffel_latex(Gamma, n):
+    latex_symbols = []
+    for i in range(n):
+        for j in range(n):
+            for k in range(n):
+                if not Gamma[i][j][k].equals(0):
+                    latex = f"\\Gamma^{{{i}}}_{{{j}{k}}} = {sp.latex(Gamma[i][j][k])}"
+                    latex_symbols.append(latex)
+    return latex_symbols
+
+def generate_riemann_latex(R_abcd, n):
+    latex_symbols = []
+    for i in range(n):
+        for j in range(n):
+            for k in range(n):
+                for l in range(n):
+                    if not R_abcd[i][j][k][l].equals(0):
+                        latex = f"R_{{{i}{j}{k}{l}}} = {sp.latex(R_abcd[i][j][k][l])}"
+                        latex_symbols.append(latex)
+    return latex_symbols
+
+def generate_ricci_latex(Ricci, n):
+    latex_symbols = []
+    for i in range(n):
+        for j in range(n):
+            if not Ricci[i,j].equals(0):
+                latex = f"R_{{{i}{j}}} = {sp.latex(Ricci[i,j])}"
+                latex_symbols.append(latex)
+    return latex_symbols
+
+def generate_einstein_latex(G_lower, n):
+    latex_symbols = []
+    for i in range(n):
+        for j in range(n):
+            if not G_lower[i,j].equals(0):
+                latex = f"G_{{{i}{j}}} = {sp.latex(G_lower[i,j])}"
+                latex_symbols.append(latex)
+    return latex_symbols
+
 
 

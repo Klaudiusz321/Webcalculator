@@ -102,32 +102,91 @@ t, chi, theta, phi;
 
 const SampleMetrics: React.FC = () => {
   return (
-    <div>
-      <h2>Przykładowe Metryki</h2>
-      <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-          gap: "1rem"
-        }}>
+    <div style={containerStyle}>
+      <h2 style={titleStyle}>Sample Metrics</h2>
+      <div style={gridContainerStyle}>
         {sampleMetrics.map(metric => (
-          <div key={metric.id} style={{
-              border: "1px solid #ccc",
-              padding: "1rem",
-              borderRadius: "4px",
-              backgroundColor: "#1a1a1a"
-            }}>
-            <h3>{metric.name}</h3>
-            <p>{metric.shortDescription}</p>
-            <pre style={{ padding: "0.5rem", overflowX: "auto" }}>
+          <div key={metric.id} style={gridItemStyle}>
+            <h3 style={headingStyle}>{metric.name}</h3>
+            <p style={descriptionStyle}>{metric.shortDescription}</p>
+            <pre style={codeStyle}>
               {metric.metricText}
             </pre>
-            {/* Jeśli pole "plot" zawiera wygenerowany Base64 obraz, wyświetl go: */}
-            
           </div>
         ))}
       </div>
     </div>
   );
+};
+
+const containerStyle: React.CSSProperties = {
+  width: "100%",
+  maxWidth: "1200px",
+  margin: "0 auto",
+  padding: "clamp(1rem, 4vw, 2rem)",
+  boxSizing: "border-box",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+};
+
+const titleStyle: React.CSSProperties = {
+  textAlign: "center",
+  marginBottom: "clamp(1.5rem, 4vw, 2rem)",
+  fontSize: "clamp(1.5rem, 5vw, 2rem)",
+  color: "white",
+};
+
+const gridContainerStyle: React.CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))",
+  gap: "clamp(1rem, 3vw, 2rem)",
+  width: "100%",
+  padding: "0.5rem",
+  justifyItems: "center",
+};
+
+const gridItemStyle: React.CSSProperties = {
+  padding: "clamp(1rem, 3vw, 1.5rem)",
+  border: "1px solid rgba(255, 255, 255, 0.1)",
+  borderRadius: "8px",
+  backgroundColor: "#1a1a1a",
+  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+  color: "white",
+  width: "100%",
+  margin: "0 auto",
+  boxSizing: "border-box",
+  textAlign: "center",
+};
+
+const headingStyle: React.CSSProperties = {
+  fontSize: "clamp(1.2rem, 4vw, 1.5rem)",
+  marginBottom: "1rem",
+  color: "white",
+  fontWeight: "500",
+};
+
+const descriptionStyle: React.CSSProperties = {
+  fontSize: "clamp(0.875rem, 1vw, 1rem)",
+  marginBottom: "1rem",
+  lineHeight: "1.5",
+  color: "rgba(255, 255, 255, 0.8)",
+};
+
+const codeStyle: React.CSSProperties = {
+  padding: "1rem",
+  backgroundColor: "#242424",
+  borderRadius: "4px",
+  overflowX: "auto",
+  fontFamily: "monospace",
+  fontSize: "clamp(0.75rem, 1vw, 0.9rem)",
+  lineHeight: "1.4",
+  whiteSpace: "pre-wrap",
+  wordBreak: "break-word",
+  border: "1px solid rgba(255, 255, 255, 0.05)",
+  color: "rgba(255, 255, 255, 0.9)",
+  textAlign: "left",
+  margin: "0 auto",
 };
 
 export default SampleMetrics;

@@ -6,15 +6,19 @@ export interface MetricData {
   coordinates: string[];
   parameters: string[];
   metryka: { [key: string]: string };
-  g: any[];
-  Gamma: any[];
-  R_abcd: any[];
-  Ricci: any[];
   scalarCurvature: string;
-  scalarCurvatureLatex: string;  // Nowe pole do przechowywania LaTeX-a
+  scalarCurvatureLatex: string;
+  christoffelLatex: string[];
+  riemannLatex: string[];
+  ricciLatex: string[];
+  einsteinLatex: string[];
   outputText?: string;
   plotImage?: string;
-  plot?: string; 
+  plot?: string;
+  g?: any[];
+  Gamma?: any[];
+  R_abcd?: any[];
+  Ricci?: any[];
 }
 
 interface MetricInputFormProps {
@@ -25,7 +29,7 @@ const MetricInputForm: React.FC<MetricInputFormProps> = ({ onResult }) => {
   const [inputText, setInputText] = useState<string>("");
 
   const filterNonZeroResults = (data: MetricData): MetricData => {
-    const filterNonZero = (arr: any[]) => arr.filter(item => item !== 0);
+    const filterNonZero = (arr: any[] | undefined) => arr ? arr.filter(item => item !== 0) : [];
     return {
       ...data,
       g: filterNonZero(data.g),

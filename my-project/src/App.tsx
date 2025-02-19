@@ -1,12 +1,14 @@
 
 import Calculator from "./sections/Calculator";
+import { HelmetProvider } from 'react-helmet-async';
 
 function App() {
   return (
-    <div className="App">
-      <Calculator />
-      
-    </div>
+    <HelmetProvider>
+      <div className="App">
+        <Calculator />
+      </div>
+    </HelmetProvider>
   );
 }
 
