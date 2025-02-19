@@ -12,22 +12,7 @@ Rate Limiting: Optionally uses SlowAPI for limiting requests (protects the API f
 Front-End: Implemented with Vite/React, featuring an interactive interface and (optionally) a 3D plot (if integrated).
 API Documentation: FastAPI automatically generates interactive docs under /docs and ReDoc
 
-my-project/
-├── backend/
-│   ├── __init__.py
-│   ├── main.py               # FastAPI application entry
-│   ├── metric_models.py      # Pydantic models (MetricRequest, etc.)
-│   ├── tensor_calculations.py
-│   └── ...
-├── src/                      # React (Vite) frontend
-│   ├── components/
-│   ├── sections/
-│   └── ...
-├── Dockerfile                # Example Docker setup for the project
-├── package.json              # Frontend dependencies
-├── requirements.txt          # Python dependencies
-├── README.md                 # This file
-└── ...
+
 
 Deployment
 Frontend on Netlify (static build in dist for Vite).
