@@ -1,7 +1,11 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from metric_models import MetricRequest
-from tensor_calculations import (
+from fastapi.responses import HTMLResponse
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from backend.metric_models import MetricRequest
+from backend.tensor_calculations import (
     wczytaj_metryke_z_tekstu,
     oblicz_tensory,
     compute_einstein_tensor,
@@ -13,8 +17,15 @@ from tensor_calculations import (
 )
 import sympy as sp
 
-
-app = FastAPI()
+# Inicjalizacja limitera
+limiter = Limiter(key_func=get_remote_address)
+app = FastAPI(
+    title="Curvature Calculator API",
+    description="API do obliczania tensorów krzywizny i innych wielkości geometrycznych",
+    version="1.0.0",
+)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,8 +35,46 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/", response_class=HTMLResponse)
+async def root():
+    return """
+    <html>
+        <head>
+            <title>Curvature Calculator API</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+                code {
+                    background-color: #f4f4f4;
+                    padding: 2px 5px;
+                    border-radius: 3px;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Curvature Calculator API</h1>
+            <p>Dostępne endpointy:</p>
+            <ul>
+                <li><code>POST /api/calculate</code> - Obliczenia tensorów</li>
+                <li><code>POST /api/import</code> - Import danych z plików</li>
+            </ul>
+            <p>Dokumentacja API dostępna pod:</p>
+            <ul>
+                <li><a href="/docs">/docs</a> - Swagger UI</li>
+                <li><a href="/redoc">/redoc</a> - ReDoc</li>
+            </ul>
+        </body>
+    </html>
+    """
+
+# Dekorator limitujący zapytania: 5 na minutę dla calculate
 @app.post("/api/calculate")
-async def calculate(metric_request: MetricRequest):
+@limiter.limit("5/minute")
+async def calculate(request: Request, metric_request: MetricRequest):
     try:
         metric_text = metric_request.metric_text
         wspolrzedne, parametry, metryka = wczytaj_metryke_z_tekstu(metric_text)
