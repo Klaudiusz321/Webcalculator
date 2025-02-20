@@ -1,6 +1,6 @@
-
 import Calculator from "./sections/Calculator";
 import { HelmetProvider } from 'react-helmet-async';
+import "./styles/App.scss";
 
 function App() {
   return (
