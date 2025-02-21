@@ -42,14 +42,14 @@ const MetricInputForm: React.FC<MetricInputFormProps> = ({ onResult }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8000/api/calculate", {
+      const response = await fetch("https://calculator1-fc4166db17b2.herokuapp.com/api/calculate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ metric_text: inputText }),
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.detail || "Wystąpił błąd podczas obliczeń.");
+        throw new Error(data.detail || "Error");
       }
       const filteredData = filterNonZeroResults(data);
       onResult(filteredData);
@@ -65,7 +65,7 @@ const MetricInputForm: React.FC<MetricInputFormProps> = ({ onResult }) => {
         onChange={(e) => setInputText(e.target.value)}
         rows={10}
         style={textareaStyle}
-        placeholder={`Przykład:
+        placeholder={`Example:
 x, y ; a, tau, psi, theta, phi
 0 0 -c**2
 1 1 a(t)**2/(-k*psi**2+1)
