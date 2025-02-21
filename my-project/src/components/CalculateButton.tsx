@@ -30,18 +30,22 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       .replace(/.*?= /, ''); // Usuń część przed znakiem równości
   };
 
+  const safeMap = (arr: string[] | undefined, fn: (item: string) => string): string[] => {
+    return Array.isArray(arr) ? arr.map(fn) : [];
+  };
+
   const convertToMetricData = (response: BackendResponse): MetricData => {
-    // Konwertuj dane do formatu MetricData
+    // Konwertuj dane do formatu MetricData z bezpiecznym dostępem do pól
     return {
       coordinates: [],
       parameters: [],
       metryka: {},
-      scalarCurvature: response.scalar[0] ? cleanLatex(response.scalar[0]) : "",
-      scalarCurvatureLatex: response.scalar[0] ? cleanLatex(response.scalar[0]) : "",
-      christoffelLatex: response.christoffel.map(cleanLatex),
-      riemannLatex: response.riemann.map(cleanLatex),
-      ricciLatex: response.ricci.map(cleanLatex),
-      einsteinLatex: response.einstein.map(cleanLatex),
+      scalarCurvature: response.scalar?.[0] ? cleanLatex(response.scalar[0]) : "",
+      scalarCurvatureLatex: response.scalar?.[0] ? cleanLatex(response.scalar[0]) : "",
+      christoffelLatex: safeMap(response.christoffel, cleanLatex),
+      riemannLatex: safeMap(response.riemann, cleanLatex),
+      ricciLatex: safeMap(response.ricci, cleanLatex),
+      einsteinLatex: safeMap(response.einstein, cleanLatex),
     };
   };
 
