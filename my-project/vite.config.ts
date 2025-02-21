@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://127.0.0.1:8000", // adres Twojego backendu
+        target: "https://calculator1-fc4166db17b2.herokuapp.com/api/calculate", // adres Twojego backendu
         changeOrigin: true,
         secure: false,
       },
