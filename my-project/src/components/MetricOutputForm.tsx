@@ -7,9 +7,19 @@ interface MetricOutputFormProps {
 }
 
 const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
-  if (!result) {
-    return <div>No data available</div>;
+  if (!result || !result.coordinates || !result.parameters) {
+    return (
+      <div style={sectionStyle}>
+        <h3 style={subtitleStyle}>No data available</h3>
+      </div>
+    );
   }
+
+  const renderList = (items: string[] = []) => {
+    return items.map((item, index) => (
+      <li key={index} className="list-item">{item}</li>
+    ));
+  };
 
   return (
     <div style={containerStyle}>
@@ -22,23 +32,19 @@ const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
           <div>
             <h4 style={{ fontSize: "1.1rem", marginBottom: "0.5rem" }}>Coordinates</h4>
             <ul style={listStyle}>
-              {result.coordinates.map((coord, index) => (
-                <li key={index} className="list-item">{coord}</li>
-              ))}
+              {renderList(result.coordinates)}
             </ul>
           </div>
           <div>
             <h4 style={{ fontSize: "1.1rem", marginBottom: "0.5rem" }}>Parameters</h4>
             <ul style={listStyle}>
-              {result.parameters.map((param, index) => (
-                <li key={index} className="list-item">{param}</li>
-              ))}
+              {renderList(result.parameters)}
             </ul>
           </div>
         </div>
       </section>
 
-      {result.christoffelLatex && result.christoffelLatex.length > 0 && (
+      {result.christoffelLatex?.length > 0 && (
         <section style={sectionStyle}>
           <h3 style={subtitleStyle}>Christoffel Symbols</h3>
           <div style={latexContainerStyle} className="latex-grid">
@@ -51,7 +57,7 @@ const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
         </section>
       )}
 
-      {result.riemannLatex && result.riemannLatex.length > 0 && (
+      {result.riemannLatex?.length > 0 && (
         <section style={sectionStyle}>
           <h3 style={subtitleStyle}>Riemann Tensor</h3>
           <div style={latexContainerStyle} className="latex-grid">
@@ -64,7 +70,7 @@ const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
         </section>
       )}
 
-      {result.ricciLatex && result.ricciLatex.length > 0 && (
+      {result.ricciLatex?.length > 0 && (
         <section style={sectionStyle}>
           <h3 style={subtitleStyle}>Ricci Tensor</h3>
           <div style={latexContainerStyle} className="latex-grid">
@@ -77,7 +83,7 @@ const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
         </section>
       )}
 
-      {result.einsteinLatex && result.einsteinLatex.length > 0 && (
+      {result.einsteinLatex?.length > 0 && (
         <section style={sectionStyle}>
           <h3 style={subtitleStyle}>Einstein Tensor</h3>
           <div style={latexContainerStyle} className="latex-grid">

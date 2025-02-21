@@ -1,15 +1,56 @@
 import React, { useState } from "react";
+import { MetricData } from "./MetricInputForm";
 
 interface CalculateButtonProps {
   input: string;
-  onCalculate: (result: any) => void;
+  onCalculate: (result: MetricData) => void;
+}
+
+interface BackendResponse {
+  metric: string[];
+  christoffel: string[];
+  riemann: string[];
+  ricci: string[];
+  einstein: string[];
+  scalar: string[];
+  success: boolean;
+  error?: string;
+  detail?: string;
 }
 
 const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const cleanLatex = (latex: string): string => {
+    // Usuń znaczniki \( i \) oraz dodatkowe znaki ucieczki
+    return latex
+      .replace(/\\+\(/g, '')
+      .replace(/\\+\)/g, '')
+      .replace(/.*?= /, ''); // Usuń część przed znakiem równości
+  };
+
+  const convertToMetricData = (response: BackendResponse): MetricData => {
+    // Konwertuj dane do formatu MetricData
+    return {
+      coordinates: [],
+      parameters: [],
+      metryka: {},
+      scalarCurvature: response.scalar[0] ? cleanLatex(response.scalar[0]) : "",
+      scalarCurvatureLatex: response.scalar[0] ? cleanLatex(response.scalar[0]) : "",
+      christoffelLatex: response.christoffel.map(cleanLatex),
+      riemannLatex: response.riemann.map(cleanLatex),
+      ricciLatex: response.ricci.map(cleanLatex),
+      einsteinLatex: response.einstein.map(cleanLatex),
+    };
+  };
+
   const handleClick = async () => {
+    if (!input.trim()) {
+      setError("Please enter metric data");
+      return;
+    }
+
     try {
       setIsLoading(true);
       setError(null);
@@ -18,32 +59,38 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Accept": "application/json",
         },
         body: JSON.stringify({ 
           metric_text: input 
         }),
       });
       
-      const data = await response.json();
+      const data: BackendResponse = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.detail || "Błąd obliczeń");
+        throw new Error(data.detail || data.error || "Błąd obliczeń");
       }
       
-      onCalculate(data);
+      if (data.success) {
+        const metricData = convertToMetricData(data);
+        onCalculate(metricData);
+      } else {
+        throw new Error("Invalid response format");
+      }
     } catch (error: any) {
       console.error("Calculation error:", error);
-      setError(error.message);
-      // Przekazujemy pusty obiekt z podstawowymi polami zamiast null
+      setError(error.message || "Wystąpił nieznany błąd");
       onCalculate({
         coordinates: [],
         parameters: [],
         metryka: {},
-        g: [],
-        Gamma: [],
-        R_abcd: [],
-        Ricci: [],
         scalarCurvature: "",
+        scalarCurvatureLatex: "",
+        christoffelLatex: [],
+        riemannLatex: [],
+        ricciLatex: [],
+        einsteinLatex: [],
         outputText: `Error: ${error.message}`,
       });
     } finally {
@@ -52,26 +99,50 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
   };
   
   return (
-    <div>
+    <div style={containerStyle}>
       <button
         type="button"
         onClick={handleClick}
         disabled={isLoading}
-        style={{ 
-          padding: "0.5rem 1rem", 
-          marginTop: "1rem",
-          opacity: isLoading ? 0.7 : 1 
-        }}
+        style={buttonStyle}
       >
         {isLoading ? "Calculating..." : "Calculate"}
       </button>
       {error && (
-        <div style={{ color: "red", marginTop: "0.5rem" }}>
+        <div style={errorStyle}>
           {error}
         </div>
       )}
     </div>
   );
+};
+
+const containerStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '0.5rem',
+  width: '100%',
+};
+
+const buttonStyle: React.CSSProperties = {
+  padding: "0.75rem 1.5rem",
+  backgroundColor: "#2a2a2a",
+  color: "white",
+  border: "1px solid rgba(255, 255, 255, 0.1)",
+  borderRadius: "4px",
+  cursor: "pointer",
+  fontSize: "1rem",
+  width: "100%",
+  transition: "all 0.2s ease",
+  opacity: 1,
+};
+
+const errorStyle: React.CSSProperties = {
+  color: "#ff6b6b",
+  fontSize: "0.9rem",
+  textAlign: "center",
+  marginTop: "0.5rem",
 };
 
 export default CalculateButton;
