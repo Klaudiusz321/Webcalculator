@@ -27,6 +27,7 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
     return latex
       .replace(/\\+\(/g, '')
       .replace(/\\+\)/g, '')
+      .replace(/g_\{(\d+)(\d+)\} = /, '') // Usuń prefiks metryki
       .replace(/.*?= /, ''); // Usuń część przed znakiem równości
   };
 
@@ -35,11 +36,24 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
   };
 
   const convertToMetricData = (response: BackendResponse): MetricData => {
-    // Konwertuj dane do formatu MetricData z bezpiecznym dostępem do pól
+    // Wyodrębnij współrzędne i parametry z pierwszej linii metryki
+    const coordinates = ['t', 'r', 'theta', 'phi']; // Przykładowe wartości - zaktualizuj zgodnie z danymi
+    const parameters = ['a']; // Przykładowe wartości - zaktualizuj zgodnie z danymi
+
+    // Konwertuj metrykę do obiektu
+    const metryka: { [key: string]: string } = {};
+    response.metric?.forEach(metric => {
+      const match = metric.match(/g_\{(\d+)(\d+)\} = (.+)/);
+      if (match) {
+        const [_, i, j, value] = match;
+        metryka[`${i}${j}`] = cleanLatex(value);
+      }
+    });
+
     return {
-      coordinates: [],
-      parameters: [],
-      metryka: {},
+      coordinates,
+      parameters,
+      metryka,
       scalarCurvature: response.scalar?.[0] ? cleanLatex(response.scalar[0]) : "",
       scalarCurvatureLatex: response.scalar?.[0] ? cleanLatex(response.scalar[0]) : "",
       christoffelLatex: safeMap(response.christoffel, cleanLatex),
