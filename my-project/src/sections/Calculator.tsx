@@ -9,13 +9,13 @@ import { Helmet } from 'react-helmet-async';
 const Calculator: React.FC = () => {
   const [result, setResult] = useState<MetricData | null>(null);
 
-  useEffect(() => {
-    try {
-      ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-    } catch (error) {
-      console.error('AdSense error:', error);
-    }
-  }, []);
+//   useEffect(() => {
+//     try {
+//       ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+//     } catch (error) {
+//       console.error('AdSense error:', error);
+//     }
+//   }, []);
 
   const handleResult = (data: MetricData) => {
     setResult(data);
