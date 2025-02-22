@@ -1,0 +1,42 @@
+@import './mixins';
+
+.footer {
+    @include flex;
+    padding: 2em;
+    background-color: #000;
+    color: #707070;
+
+    &__inner {
+        @include flex;
+        width: 100%;
+        max-width: 1200px;
+    }
+
+    &__socials {
+        display: flex;
+        flex-wrap: wrap;
+        color: #fff;
+        gap: 20px;
+    }
+
+    &__socials-item {
+        @include flex(row, center, flex-start);
+        width: fit-content;
+        font-size: 0.9em;
+        color: #fff;
+
+        &:hover {
+            color: #fff;
+        }
+
+        svg {
+            margin-right: 3px;
+        }
+    }
+
+    &__copyright {
+        width: 80%;
+        text-align: center;
+        padding-top: 1em;
+    }
+}
