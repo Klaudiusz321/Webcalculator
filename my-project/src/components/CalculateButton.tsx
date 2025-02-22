@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { MetricData } from "./MetricInputForm";
 
+const API_URL = 'http://localhost:8000/api/calculate'; // Zaktualizowany URL
+
 interface CalculateButtonProps {
   input: string;
   onCalculate: (result: MetricData) => void;
@@ -73,7 +75,7 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch("https://calculator1-fc4166db17b2.herokuapp.com/api/calculate", {
+      const response = await fetch(API_URL, { // Użycie zaktualizowanego URL
         method: "POST",
         headers: {
           "Content-Type": "application/json",
