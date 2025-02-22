@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { MetricData } from "./MetricInputForm";
 
-const API_URL = 'http://localhost:8000/api/calculate'; // Zaktualizowany URL
+const API_URL = 'https://calculator1-fc4166db17b2.herokuapp.com/api/calculate'; // Zmiana z localhost na Heroku
 
 interface CalculateButtonProps {
   input: string;
@@ -75,7 +75,9 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch(API_URL, { // Użycie zaktualizowanego URL
+      console.log('Sending request to:', API_URL);
+
+      const response = await fetch(API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -85,6 +87,8 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
           metric_text: input 
         }),
       });
+      
+      console.log('Response status:', response.status);
       
       const data: BackendResponse = await response.json();
       
@@ -99,7 +103,7 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
         throw new Error("Invalid response format");
       }
     } catch (error: any) {
-      console.error("Calculation error:", error);
+      console.error("Calculation error details:", error);
       setError(error.message || "Wystąpił nieznany błąd");
       onCalculate({
         coordinates: [],

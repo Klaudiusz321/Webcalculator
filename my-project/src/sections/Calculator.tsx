@@ -8,16 +8,13 @@ import { Helmet } from 'react-helmet-async';
 
 const Calculator: React.FC = () => {
   const [result, setResult] = useState<MetricData | null>(null);
-  const [isAdBlocked, setIsAdBlocked] = useState(false);
 
   useEffect(() => {
-    // Sprawdź czy reklama została zablokowana
-    setTimeout(() => {
-      const adElement = document.querySelector('.adsbygoogle');
-      if (adElement && adElement.innerHTML.length === 0) {
-        setIsAdBlocked(true);
-      }
-    }, 2000);
+    try {
+      ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+    } catch (error) {
+      console.error('AdSense error:', error);
+    }
   }, []);
 
   const handleResult = (data: MetricData) => {
@@ -40,30 +37,19 @@ const Calculator: React.FC = () => {
         <MetricInputForm onResult={handleResult} />
       </section>
       
-      {isAdBlocked ? (
-        <div style={{
-          margin: '20px 0',
-          padding: '20px',
-          textAlign: 'center',
-          backgroundColor: '#f8f9fa',
-          border: '1px solid #dee2e6'
-        }}>
-          Wspieraj nas wyłączając AdBlock
-        </div>
-      ) : (
-        <ins 
-          className="adsbygoogle"
-          style={{
-            display: "block",
-            textAlign: "center",
-            margin: "20px 0"
-          }}
-          data-ad-client="pub-6565480842270630"
-          data-ad-slot="1234567890"
-          data-ad-format="auto"
-          data-full-width-responsive="true"
-        />
-      )}
+      {/* Reklama AdSense */}
+      <ins 
+        className="adsbygoogle"
+        style={{
+          display: "block",
+          textAlign: "center",
+          margin: "20px 0"
+        }}
+        data-ad-client="pub-6565480842270630"
+        data-ad-slot="1234567890"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
       
       {result && <MetricOutputForm result={result} />}
       <hr className="my-8" />

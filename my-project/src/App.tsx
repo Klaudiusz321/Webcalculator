@@ -1,26 +1,14 @@
 import { useEffect, useState } from 'react';
 import Calculator from "./sections/Calculator";
 import Footer from "./components/Footer";
-import { HelmetProvider } from 'react-helmet-async';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import "./styles/App.scss";
 
 function App() {
   const [isAdBlocked, setIsAdBlocked] = useState(false);
 
   useEffect(() => {
-    // Sprawdź czy AdSense jest blokowany
-    const checkAdBlock = async () => {
-      try {
-        await fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js');
-      } catch (e) {
-        setIsAdBlocked(true);
-      }
-    };
-    
-    checkAdBlock();
-  }, []);
-
-  useEffect(() => {
+    // Próba pobrania skryptu AdSense i inicjalizacja reklamy
     const loadAdSense = async () => {
       try {
         const response = await fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js');
@@ -30,18 +18,31 @@ function App() {
           script.async = true;
           script.crossOrigin = "anonymous";
           document.head.appendChild(script);
+          
+          // Czekamy na załadowanie skryptu
+          script.onload = () => {
+            try {
+              ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+              setIsAdBlocked(false);
+            } catch (e) {
+              console.error('adsbygoogle push error:', e);
+              setIsAdBlocked(true);
+            }
+          };
         }
       } catch (e) {
-        console.log('AdBlock detected');
+        console.error('AdSense blocked:', e);
+        setIsAdBlocked(true);
       }
     };
-    
+
     loadAdSense();
-  }, []);
+  }, []); // Pusta tablica zależności - wykonaj tylko raz
 
   return (
     <HelmetProvider>
       <div className="App">
+        {/* Komunikat, jeśli wykryto blokadę reklam */}
         {isAdBlocked && (
           <div style={{
             padding: '10px',
@@ -50,11 +51,32 @@ function App() {
             textAlign: 'center',
             margin: '10px 0'
           }}>
-            Wykryto AdBlock. Prosimy o wyłączenie blokady reklam, aby wspierać rozwój aplikacji.
+            Wykryto blokadę reklam (Brave Shields lub AdBlock). Aby zobaczyć reklamy, wyłącz blokowanie reklam dla tej strony.
           </div>
         )}
+        <Helmet>
+          <title>My Calculator App</title>
+        </Helmet>
+        
+        {/* Twoje komponenty */}
         <Calculator />
-        <Footer/>
+        
+        {/* AdSense ad unit */}
+        <div>
+          <ins
+            className="adsbygoogle"
+            style={{
+              display: "block",
+              textAlign: "center"
+            }}
+            data-ad-client="ca-pub-6565480842270630"
+            data-ad-slot="7570771780"
+            data-ad-format="auto"
+            data-full-width-responsive="true"
+          />
+        </div>
+
+        <Footer />
       </div>
     </HelmetProvider>
   );
