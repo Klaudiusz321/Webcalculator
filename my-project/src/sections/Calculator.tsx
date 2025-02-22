@@ -42,6 +42,15 @@ const Calculator: React.FC = () => {
         data-ad-format="auto"
         data-full-width-responsive="true"
       />
+
+    <ins className="adsbygoogle"
+     style={{display:"block"}}
+     data-ad-client="ca-pub-6565480842270630"
+     data-ad-slot="5735748263"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+     
+     (adsbygoogle = window.adsbygoogle || []).push({});
       
       {result && <MetricOutputForm result={result} />}
       <hr className="my-8" />
