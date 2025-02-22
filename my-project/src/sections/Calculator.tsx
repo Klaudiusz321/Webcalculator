@@ -10,12 +10,11 @@ const Calculator: React.FC = () => {
   const [result, setResult] = useState<MetricData | null>(null);
 
   useEffect(() => {
-    // Dodaj skrypt Google AdSense
-    const script = document.createElement('script');
-    script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6565480842270630";
-    script.async = true;
-    script.crossOrigin = "anonymous";
-    document.head.appendChild(script);
+    try {
+      ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+    } catch (error) {
+      console.error('AdSense error:', error);
+    }
   }, []);
 
   const handleResult = (data: MetricData) => {
@@ -41,18 +40,9 @@ const Calculator: React.FC = () => {
       <hr className="my-8" />
       <SampleMetrics />
 
-      {/* Kontener na reklamę */}
-      <div style={{ 
-        margin: '20px auto',
-        textAlign: 'center',
-        maxWidth: '100%',
-        overflow: 'hidden'
-      }}>
+      <div style={{ margin: '20px 0' }}>
         <ins className="adsbygoogle"
-          style={{
-            display: 'block',
-            textAlign: 'center',
-          }}
+          style={{ display: 'block' }}
           data-ad-client="ca-pub-6565480842270630"
           data-ad-slot="twój-slot-id"
           data-ad-format="auto"
