@@ -27,6 +27,7 @@ const Calculator: React.FC = () => {
       <Helmet>
         <title>Tensor Calculator</title>
         <meta name="description" content="Calculate tensor operations online" />
+        <meta name="google-adsense-account" content="ca-pub-6565480842270630" />
       </Helmet>
 
       <Header />
