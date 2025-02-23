@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Calculator from "./sections/Calculator";
 import Footer from "./components/Footer";
+import CurvatureSurface from "./components/CurvatureSurface";
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import "./styles/App.scss";
 import AdSenseAd from "./components/AdSenseAd";
@@ -20,15 +21,15 @@ function App() {
           document.head.appendChild(script);
           
           // Czekamy na załadowanie skryptu
-          script.onload = () => {
-            try {
-              ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-              setIsAdBlocked(false);
-            } catch (e) {
-              console.error('adsbygoogle push error:', e);
-              setIsAdBlocked(true);
-            }
-          };
+        //   script.onload = () => {
+        //     try {
+        //       ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        //       setIsAdBlocked(false);
+        //     } catch (e) {
+        //       console.error('adsbygoogle push error:', e);
+        //       setIsAdBlocked(true);
+        //     }
+        //   };
         }
       } catch (e) {
         console.error('AdSense blocked:', e);
@@ -59,6 +60,7 @@ function App() {
         </Helmet>
         <Calculator />
         <AdSenseAd />
+        <CurvatureSurface/>
         <Footer />
       </div>
     </HelmetProvider>
