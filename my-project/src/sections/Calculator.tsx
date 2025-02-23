@@ -37,19 +37,8 @@ const Calculator: React.FC = () => {
         <MetricInputForm onResult={handleResult} />
       </section>
       
-      {/* Reklama AdSense */}
-      <ins 
-        className="adsbygoogle"
-        style={{
-          display: "block",
-          textAlign: "center",
-          margin: "20px 0"
-        }}
-        data-ad-client="pub-6565480842270630"
-        data-ad-slot="1234567890"
-        data-ad-format="auto"
-        data-full-width-responsive="true"
-      />
+     
+      
       
       {result && <MetricOutputForm result={result} />}
       <hr className="my-8" />

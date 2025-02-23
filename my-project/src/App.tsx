@@ -3,7 +3,7 @@ import Calculator from "./sections/Calculator";
 import Footer from "./components/Footer";
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import "./styles/App.scss";
-
+import AdSenseAd from "./components/AdSenseAd";
 function App() {
   const [isAdBlocked, setIsAdBlocked] = useState(false);
 
@@ -51,7 +51,7 @@ function App() {
             textAlign: 'center',
             margin: '10px 0'
           }}>
-            Wykryto blokadę reklam (Brave Shields lub AdBlock). Aby zobaczyć reklamy, wyłącz blokowanie reklam dla tej strony.
+            Wykryto blokadę reklam. Aby zobaczyć reklamy, wyłącz blokowanie reklam dla tej strony.
           </div>
         )}
         <Helmet>
@@ -61,20 +61,7 @@ function App() {
         {/* Twoje komponenty */}
         <Calculator />
         
-        {/* AdSense ad unit */}
-        <div>
-          <ins
-            className="adsbygoogle"
-            style={{
-              display: "block",
-              textAlign: "center"
-            }}
-            data-ad-client="ca-pub-6565480842270630"
-            data-ad-slot="7570771780"
-            data-ad-format="auto"
-            data-full-width-responsive="true"
-          />
-        </div>
+       <AdSenseAd />
 
         <Footer />
       </div>
