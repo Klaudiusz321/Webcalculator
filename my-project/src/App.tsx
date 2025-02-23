@@ -57,12 +57,9 @@ function App() {
         <Helmet>
           <title>My Calculator App</title>
         </Helmet>
-        
-        {/* Twoje komponenty */}
+        <AdSenseAd />
         <Calculator />
-        
-       <AdSenseAd />
-
+        <AdSenseAd />
         <Footer />
       </div>
     </HelmetProvider>
