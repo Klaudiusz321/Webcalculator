@@ -1,60 +1,66 @@
-import { useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+// src/components/CurvatureSurface.tsx
+import React, { useMemo } from 'react';
 import * as THREE from 'three';
 
-interface CurvatureSurfaceProps {
-  amplitude?: number;
-  frequency?: number;
-  size?: number;
-  segments?: number;
+export interface CurvatureData {
+  points: number[][];  // np. [[x, y], ...]
+  values: number[];    // np. [z1, z2, ...]
+  ranges?: [number, number][];
+  coordinates?: string[];
+  parameters?: string[];
 }
 
-const CurvatureSurfaceComponent: React.FC<CurvatureSurfaceProps> = ({ amplitude = 1, frequency = 1, size = 10, segments = 100 }) => {
-  const meshRef = useRef<THREE.Mesh | null>(null);
+interface CurvatureSurfaceProps {
+  data: CurvatureData;
+}
 
-  useFrame((state) => {
-    if (!meshRef.current) return;
-    
-    const time = state.clock.getElapsedTime();
-    const positionAttribute = meshRef.current.geometry?.attributes.position;
+const CurvatureSurface: React.FC<CurvatureSurfaceProps> = ({ data }) => {
+  const { points, values } = data;
+  if (points.length !== values.length) {
+    console.error('Liczba punktów nie odpowiada liczbie wartości!');
+    return null;
+  }
 
-    if (!positionAttribute) return;
-
-    // Przetwarzamy każdy wierzchołek geometrii
-    for (let i = 0; i < positionAttribute.count; i++) {
-      const x = positionAttribute.getX(i);
-      const z = positionAttribute.getZ(i);
-      // Funkcja przemieszczenia – możesz ją modyfikować według potrzeb (np. na podstawie danych z backendu)
-      const displacement = amplitude * Math.sin(frequency * Math.sqrt(x * x + z * z) - time);
-      positionAttribute.setY(i, displacement);
+  const geometry = useMemo(() => {
+    const numPoints = points.length;
+    const gridSize = Math.sqrt(numPoints);
+    if (!Number.isInteger(gridSize)) {
+      console.error('Punkty nie tworzą kwadratowej siatki!');
+      return new THREE.BufferGeometry();
     }
-    positionAttribute.needsUpdate = true;
-    // Aktualizacja normalnych, aby oświetlenie poprawnie padało na zdeformowaną powierzchnię
-    meshRef.current.geometry.computeVertexNormals();
-  });
+    
+    const vertices = new Float32Array(numPoints * 3);
+    for (let i = 0; i < numPoints; i++) {
+      const [x, y] = points[i];
+      const z = values[i];
+      vertices[i * 3] = x;
+      vertices[i * 3 + 1] = z;
+      vertices[i * 3 + 2] = y;
+    }
+    
+    const geom = new THREE.BufferGeometry();
+    geom.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+
+    const indices: number[] = [];
+    for (let i = 0; i < gridSize - 1; i++) {
+      for (let j = 0; j < gridSize - 1; j++) {
+        const a = i * gridSize + j;
+        const b = a + 1;
+        const c = a + gridSize;
+        const d = c + 1;
+        indices.push(a, b, d);
+        indices.push(a, d, c);
+      }
+    }
+    geom.setIndex(indices);
+    geom.computeVertexNormals();
+    return geom;
+  }, [points, values]);
 
   return (
-    <>
-      <mesh ref={meshRef}>
-        <planeGeometry args={[size, size, segments, segments]} />
-        <meshStandardMaterial color="skyblue" side={THREE.DoubleSide} />
-      </mesh>
-      {/* Dodajemy podstawową czerwoną kulę */}
-      <mesh position={[0, 2, 0]}>
-        <sphereGeometry args={[3, 32, 32]} />
-        <meshStandardMaterial color="red" />
-      </mesh>
-    </>
-  );
-};
-
-const CurvatureSurface: React.FC<CurvatureSurfaceProps> = (props) => {
-  return (
-    <Canvas camera={{ position: [0, 10, 10], fov: 60 }}>
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[5, 10, 7.5]} intensity={1} />
-      <CurvatureSurfaceComponent {...props} />
-    </Canvas>
+    <mesh geometry={geometry}>
+      <meshStandardMaterial color="skyblue" wireframe={false} />
+    </mesh>
   );
 };
 

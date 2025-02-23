@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { MetricData } from "./MetricInputForm";
-import { config } from '../config';
+import { config } from '../utils/config';
 
 const API_URL = config.apiUrl;
 console.log('Using API URL:', API_URL);

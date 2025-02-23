@@ -5,6 +5,8 @@ import SampleMetrics from "../components/SampleMetrics";
 import Header from "./header";
 import DataImport from "../components/DataImport";
 import { Helmet } from 'react-helmet-async';
+import Scene from "./Scene";
+
 
 const Calculator: React.FC = () => {
   const [result, setResult] = useState<MetricData | null>(null);
@@ -12,6 +14,9 @@ const Calculator: React.FC = () => {
   const handleResult = (data: MetricData) => {
     setResult(data);
   };
+
+  // Przygotuj dane dla CurvatureSurface
+
 
   return (
     <div className="min-h-screen p-4">
@@ -45,6 +50,10 @@ const Calculator: React.FC = () => {
       
       {result && <MetricOutputForm result={result} />}
       <hr className="my-8" />
+      {result ? <Scene metricData={result} /> : <div>Ładowanie danych...</div>}
+
+
+
       <SampleMetrics />
     </div>
   );

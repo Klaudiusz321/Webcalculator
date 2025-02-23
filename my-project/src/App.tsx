@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Calculator from "./sections/Calculator";
 import Footer from "./components/Footer";
-import CurvatureSurface from "./components/CurvatureSurface";
+
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import "./styles/App.scss";
 import AdSenseAd from "./components/AdSenseAd";
@@ -58,9 +58,11 @@ function App() {
         <Helmet>
           <title>My Calculator App</title>
         </Helmet>
+        
         <Calculator />
+        
         <AdSenseAd />
-        <CurvatureSurface/>
+        
         <Footer />
       </div>
     </HelmetProvider>
