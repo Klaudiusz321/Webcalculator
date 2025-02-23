@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { MetricData } from "./MetricInputForm";
+import { config } from '../config';
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = config.apiUrl;
+console.log('Using API URL:', API_URL);
 
 interface CalculateButtonProps {
   input: string;
@@ -75,8 +77,13 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       setIsLoading(true);
       setError(null);
 
-      console.log('Sending request to:', API_URL);
-      console.log('Request body:', { metric_text: input });
+      const requestBody = { metric_text: input };
+      console.log('API URL:', API_URL);
+      console.log('Request body:', requestBody);
+      console.log('Request headers:', {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      });
 
       const response = await fetch(API_URL, {
         method: "POST",
@@ -84,18 +91,17 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
           "Content-Type": "application/json",
           "Accept": "application/json",
         },
-        body: JSON.stringify({ 
-          metric_text: input 
-        }),
+        body: JSON.stringify(requestBody),
       });
       
       console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
       
-      // Sprawdź status odpowiedzi przed próbą parsowania JSON
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error response:', errorText);
-        throw new Error(`HTTP error! status: ${response.status}`);
+        console.error('Full response:', response);
+        throw new Error(`HTTP error! status: ${response.status}, URL: ${API_URL}`);
       }
       
       const data: BackendResponse = await response.json();
