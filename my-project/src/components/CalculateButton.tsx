@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { MetricData } from "./MetricInputForm";
 
-const API_URL = 'https://calculator1-fc4166db17b2.herokuapp.com/api/calculate'; // Zmiana z localhost na Heroku
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface CalculateButtonProps {
   input: string;
