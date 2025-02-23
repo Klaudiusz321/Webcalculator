@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -11,14 +11,6 @@ interface CurvatureSurfaceProps {
 
 const CurvatureSurfaceComponent: React.FC<CurvatureSurfaceProps> = ({ amplitude = 1, frequency = 1, size = 10, segments = 100 }) => {
   const meshRef = useRef<THREE.Mesh | null>(null);
-
-  // Tworzymy geometrię płaszczyzny tylko raz, chyba że zmienią się parametry
-  const geometry = useMemo(() => {
-    const geom = new THREE.PlaneGeometry(size, size, segments, segments);
-    // Obracamy płaszczyznę, by była pozioma (obrót o -90° wokół osi X)
-    geom.rotateX(-Math.PI / 2);
-    return geom;
-  }, [size, segments]);
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -49,7 +41,7 @@ const CurvatureSurfaceComponent: React.FC<CurvatureSurfaceProps> = ({ amplitude 
       </mesh>
       {/* Dodajemy podstawową czerwoną kulę */}
       <mesh position={[0, 2, 0]}>
-        <sphereGeometry args={[4, 32, 32]} />
+        <sphereGeometry args={[3, 32, 32]} />
         <meshStandardMaterial color="red" />
       </mesh>
     </>
