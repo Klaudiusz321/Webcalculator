@@ -76,6 +76,7 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       setError(null);
 
       console.log('Sending request to:', API_URL);
+      console.log('Request body:', { metric_text: input });
 
       const response = await fetch(API_URL, {
         method: "POST",
@@ -90,17 +91,21 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       
       console.log('Response status:', response.status);
       
-      const data: BackendResponse = await response.json();
-      
+      // Sprawdź status odpowiedzi przed próbą parsowania JSON
       if (!response.ok) {
-        throw new Error(data.detail || data.error || "Błąd obliczeń");
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      
+      const data: BackendResponse = await response.json();
+      console.log('Response data:', data);
       
       if (data.success) {
         const metricData = convertToMetricData(data);
         onCalculate(metricData);
       } else {
-        throw new Error("Invalid response format");
+        throw new Error(data.error || data.detail || "Invalid response format");
       }
     } catch (error: any) {
       console.error("Calculation error details:", error);
