@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { MetricData } from "./MetricInputForm";
+import { config } from '../config';
 
-// Sprawdź czy zmienna środowiskowa jest dostępna
-const API_URL = import.meta.env.VITE_API_URL;
-console.log('Loaded API_URL:', API_URL); // Dodaj ten log
+const API_URL = config.apiUrl;
+console.log('Using API URL:', API_URL);
 
 interface CalculateButtonProps {
   input: string;
