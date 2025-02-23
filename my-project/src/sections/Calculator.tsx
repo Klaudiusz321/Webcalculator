@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import MetricInputForm, { MetricData } from "../components/MetricInputForm";
 import MetricOutputForm from "../components/MetricOutputForm";
 import SampleMetrics from "../components/SampleMetrics";
@@ -8,14 +8,6 @@ import { Helmet } from 'react-helmet-async';
 
 const Calculator: React.FC = () => {
   const [result, setResult] = useState<MetricData | null>(null);
-
-  useEffect(() => {
-    try {
-      ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-    } catch (error) {
-      console.error('AdSense error:', error);
-    }
-  }, []);
 
   const handleResult = (data: MetricData) => {
     setResult(data);
@@ -37,8 +29,19 @@ const Calculator: React.FC = () => {
         <MetricInputForm onResult={handleResult} />
       </section>
       
-     
-      
+      {/* Reklama AdSense */}
+      <ins 
+        className="adsbygoogle"
+        style={{
+          display: "block",
+          textAlign: "center",
+          margin: "20px 0"
+        }}
+        data-ad-client="pub-6565480842270630"
+        data-ad-slot="1234567890"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
       
       {result && <MetricOutputForm result={result} />}
       <hr className="my-8" />
