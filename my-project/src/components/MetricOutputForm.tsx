@@ -1,109 +1,95 @@
 import React from "react";
 import LatexDisplay from "./LatexDisplay";
-import { MetricData } from "./MetricInputForm";
 
 interface MetricOutputFormProps {
-  result: MetricData;
+  result: {
+    metric: string[];
+    christoffel: string[];
+    riemann: string[];
+    ricci: string[];
+    einstein: string[];
+    scalar: string[];
+  };
 }
 
 const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
-  if (!result || !result.coordinates || !result.parameters) {
-    return (
-      <div style={sectionStyle}>
-        <h3 style={subtitleStyle}>No data available</h3>
-      </div>
-    );
+  if (!result) {
+    return <div style={sectionStyle}>No data available</div>;
   }
-
-  const renderList = (items: string[] = []) => {
-    return items.map((item, index) => (
-      <li key={index} className="list-item">{item}</li>
-    ));
-  };
 
   return (
     <div style={containerStyle}>
-      <style>{mediaStyles}</style>
-      <h2 style={titleStyle}>Computation Results</h2>
-
+      {/* Metryka */}
       <section style={sectionStyle}>
-        <h3 style={subtitleStyle}>Coordinates & Parameters</h3>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-          <div>
-            <h4 style={{ fontSize: "1.1rem", marginBottom: "0.5rem" }}>Coordinates</h4>
-            <ul style={listStyle}>
-              {renderList(result.coordinates)}
-            </ul>
-          </div>
-          <div>
-            <h4 style={{ fontSize: "1.1rem", marginBottom: "0.5rem" }}>Parameters</h4>
-            <ul style={listStyle}>
-              {renderList(result.parameters)}
-            </ul>
-          </div>
+        <h3 style={titleStyle}>Metric Components</h3>
+        <div style={latexContainerStyle}>
+          {result.metric?.map((latex, index) => (
+            <div key={index} style={latexItemStyle}>
+              <LatexDisplay latexString={latex} />
+            </div>
+          ))}
         </div>
       </section>
 
-      {result.christoffelLatex?.length > 0 && (
-        <section style={sectionStyle}>
-          <h3 style={subtitleStyle}>Christoffel Symbols</h3>
-          <div style={latexContainerStyle} className="latex-grid">
-            {result.christoffelLatex.map((latex, index) => (
-              <div key={index} style={latexItemStyle} className="latex-item">
-                <LatexDisplay latexString={latex} />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      {/* Symbole Christoffela */}
+      <section style={sectionStyle}>
+        <h3 style={titleStyle}>Christoffel Symbols</h3>
+        <div style={latexContainerStyle}>
+          {result.christoffel?.map((latex, index) => (
+            <div key={index} style={latexItemStyle}>
+              <LatexDisplay latexString={latex} />
+            </div>
+          ))}
+        </div>
+      </section>
 
-      {result.riemannLatex?.length > 0 && (
-        <section style={sectionStyle}>
-          <h3 style={subtitleStyle}>Riemann Tensor</h3>
-          <div style={latexContainerStyle} className="latex-grid">
-            {result.riemannLatex.map((latex, index) => (
-              <div key={index} style={latexItemStyle} className="latex-item">
-                <LatexDisplay latexString={latex} />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      {/* Tensor Riemanna */}
+      <section style={sectionStyle}>
+        <h3 style={titleStyle}>Riemann Tensor</h3>
+        <div style={latexContainerStyle}>
+          {result.riemann?.map((latex, index) => (
+            <div key={index} style={latexItemStyle}>
+              <LatexDisplay latexString={latex} />
+            </div>
+          ))}
+        </div>
+      </section>
 
-      {result.ricciLatex?.length > 0 && (
-        <section style={sectionStyle}>
-          <h3 style={subtitleStyle}>Ricci Tensor</h3>
-          <div style={latexContainerStyle} className="latex-grid">
-            {result.ricciLatex.map((latex, index) => (
-              <div key={index} style={latexItemStyle} className="latex-item">
-                <LatexDisplay latexString={latex} />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      {/* Tensor Ricciego */}
+      <section style={sectionStyle}>
+        <h3 style={titleStyle}>Ricci Tensor</h3>
+        <div style={latexContainerStyle}>
+          {result.ricci?.map((latex, index) => (
+            <div key={index} style={latexItemStyle}>
+              <LatexDisplay latexString={latex} />
+            </div>
+          ))}
+        </div>
+      </section>
 
-      {result.einsteinLatex?.length > 0 && (
-        <section style={sectionStyle}>
-          <h3 style={subtitleStyle}>Einstein Tensor</h3>
-          <div style={latexContainerStyle} className="latex-grid">
-            {result.einsteinLatex.map((latex, index) => (
-              <div key={index} style={latexItemStyle} className="latex-item">
-                <LatexDisplay latexString={latex} />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      {/* Tensor Einsteina */}
+      <section style={sectionStyle}>
+        <h3 style={titleStyle}>Einstein Tensor</h3>
+        <div style={latexContainerStyle}>
+          {result.einstein?.map((latex, index) => (
+            <div key={index} style={latexItemStyle}>
+              <LatexDisplay latexString={latex} />
+            </div>
+          ))}
+        </div>
+      </section>
 
-      {result.scalarCurvatureLatex && (
-        <section style={sectionStyle}>
-          <h3 style={subtitleStyle}>Scalar Curvature</h3>
-          <div style={latexItemStyle} className="latex-item">
-            <LatexDisplay latexString={result.scalarCurvatureLatex} />
-          </div>
-        </section>
-      )}
+      {/* Krzywizna skalarna */}
+      <section style={sectionStyle}>
+        <h3 style={titleStyle}>Scalar Curvature</h3>
+        <div style={latexContainerStyle}>
+          {result.scalar?.map((latex, index) => (
+            <div key={index} style={latexItemStyle}>
+              <LatexDisplay latexString={latex} />
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };

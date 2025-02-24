@@ -10,62 +10,9 @@ interface CalculateButtonProps {
   onCalculate: (result: MetricData) => void;
 }
 
-interface BackendResponse {
-  metric: string[];
-  christoffel: string[];
-  riemann: string[];
-  ricci: string[];
-  einstein: string[];
-  scalar: string[];
-  success: boolean;
-  error?: string;
-  detail?: string;
-}
-
 const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const cleanLatex = (latex: string): string => {
-    // Usuń znaczniki \( i \) oraz dodatkowe znaki ucieczki
-    return latex
-      .replace(/\\+\(/g, '')
-      .replace(/\\+\)/g, '')
-      .replace(/g_\{(\d+)(\d+)\} = /, '') // Usuń prefiks metryki
-      .replace(/.*?= /, ''); // Usuń część przed znakiem równości
-  };
-
-  const safeMap = (arr: string[] | undefined, fn: (item: string) => string): string[] => {
-    return Array.isArray(arr) ? arr.map(fn) : [];
-  };
-
-  const convertToMetricData = (response: BackendResponse): MetricData => {
-    // Wyodrębnij współrzędne i parametry z pierwszej linii metryki
-    const coordinates = ['t', 'r', 'theta', 'phi']; // Przykładowe wartości - zaktualizuj zgodnie z danymi
-    const parameters = ['a']; // Przykładowe wartości - zaktualizuj zgodnie z danymi
-
-    // Konwertuj metrykę do obiektu
-    const metryka: { [key: string]: string } = {};
-    response.metric?.forEach(metric => {
-      const match = metric.match(/g_\{(\d+)(\d+)\} = (.+)/);
-      if (match) {
-        const [_, i, j, value] = match;
-        metryka[`${i}${j}`] = cleanLatex(value);
-      }
-    });
-
-    return {
-      coordinates,
-      parameters,
-      metryka,
-      scalarCurvature: response.scalar?.[0] ? cleanLatex(response.scalar[0]) : "",
-      scalarCurvatureLatex: response.scalar?.[0] ? cleanLatex(response.scalar[0]) : "",
-      christoffelLatex: safeMap(response.christoffel, cleanLatex),
-      riemannLatex: safeMap(response.riemann, cleanLatex),
-      ricciLatex: safeMap(response.ricci, cleanLatex),
-      einsteinLatex: safeMap(response.einstein, cleanLatex),
-    };
-  };
 
   const handleClick = async () => {
     if (!input.trim()) {
@@ -77,57 +24,48 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       setIsLoading(true);
       setError(null);
 
-      const requestBody = { metric_text: input };
-      console.log('API URL:', API_URL);
-      console.log('Request body:', requestBody);
-      console.log('Request headers:', {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      });
+      // Równoległe wywołania do obu endpointów
+      const [calculateResponse, visualizeResponse] = await Promise.all([
+        // Wywołanie do /api/calculate dla danych symbolicznych
+        fetch('http://127.0.0.1:8000/api/calculate/', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ metric_text: input }),
+        }),
+        // Wywołanie do /api/visualize dla wizualizacji
+        fetch('http://127.0.0.1:8000/api/visualize/', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            metric_text: input,
+            ranges: [[-5, 5], [-5, 5], [-5, 5]],
+            points_per_dim: 50
+          }),
+        })
+      ]);
 
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-      
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        console.error('Full response:', response);
-        throw new Error(`HTTP error! status: ${response.status}, URL: ${API_URL}`);
+      const [calculateData, visualizeData] = await Promise.all([
+        calculateResponse.json(),
+        visualizeResponse.json()
+      ]);
+
+      if (!calculateResponse.ok || !visualizeResponse.ok) {
+        throw new Error("One of the API calls failed");
       }
-      
-      const data: BackendResponse = await response.json();
-      console.log('Response data:', data);
-      
-      if (data.success) {
-        const metricData = convertToMetricData(data);
-        onCalculate(metricData);
-      } else {
-        throw new Error(data.error || data.detail || "Invalid response format");
-      }
+
+      // Łączymy dane z obu endpointów
+      const combinedData = {
+        // Dane symboliczne do MetricOutputForm
+        ...calculateData,
+        // Dane numeryczne do wizualizacji
+        numerical: visualizeData.numerical,
+        outputText: input
+      };
+
+      onCalculate(combinedData);
     } catch (error: any) {
-      console.error("Calculation error details:", error);
-      setError(error.message || "Wystąpił nieznany błąd");
-      onCalculate({
-        coordinates: [],
-        parameters: [],
-        metryka: {},
-        scalarCurvature: "",
-        scalarCurvatureLatex: "",
-        christoffelLatex: [],
-        riemannLatex: [],
-        ricciLatex: [],
-        einsteinLatex: [],
-        outputText: `Error: ${error.message}`,
-      });
+      console.error("Calculation error:", error);
+      setError(error.message || "An error occurred");
     } finally {
       setIsLoading(false);
     }

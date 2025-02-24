@@ -1,13 +1,19 @@
 // src/components/CurvatureSurface.tsx
 import React, { useMemo } from 'react';
 import * as THREE from 'three';
+import Delaunator from 'delaunator';
 
 export interface CurvatureData {
-  points: number[][];  // np. [[x, y], ...]
-  values: number[];    // np. [z1, z2, ...]
-  ranges?: [number, number][];
-  coordinates?: string[];
-  parameters?: string[];
+  points: number[][];
+  values: number[];
+  ranges: [number, number][];
+  metadata: {
+    dimensions: number;
+    coordinates: string[];
+    parameters: string[];
+    num_points: number;
+    value_range: [number, number];
+  };
 }
 
 interface CurvatureSurfaceProps {
@@ -16,50 +22,45 @@ interface CurvatureSurfaceProps {
 
 const CurvatureSurface: React.FC<CurvatureSurfaceProps> = ({ data }) => {
   const { points, values } = data;
+  
   if (points.length !== values.length) {
     console.error('Liczba punktów nie odpowiada liczbie wartości!');
     return null;
   }
 
   const geometry = useMemo(() => {
-    const numPoints = points.length;
-    const gridSize = Math.sqrt(numPoints);
-    if (!Number.isInteger(gridSize)) {
-      console.error('Punkty nie tworzą kwadratowej siatki!');
-      return new THREE.BufferGeometry();
+    const vertices = new Float32Array(points.length * 3);
+    
+    // Przygotuj punkty 2D do triangulacji
+    const points2D = points.map(p => [p[0], p[1]]);
+    
+    // Stwórz vertices
+    for (let i = 0; i < points.length; i++) {
+      vertices[i * 3] = points[i][0];     // x
+      vertices[i * 3 + 1] = values[i];    // wysokość z krzywizny
+      vertices[i * 3 + 2] = points[i][1];  // y
     }
     
-    const vertices = new Float32Array(numPoints * 3);
-    for (let i = 0; i < numPoints; i++) {
-      const [x, y] = points[i];
-      const z = values[i];
-      vertices[i * 3] = x;
-      vertices[i * 3 + 1] = z;
-      vertices[i * 3 + 2] = y;
-    }
-    
+    // Wykonaj triangulację Delaunay
+    const delaunay = new Delaunator(points2D.flat());
+    const indices = Array.from(delaunay.triangles);
+
     const geom = new THREE.BufferGeometry();
     geom.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-
-    const indices: number[] = [];
-    for (let i = 0; i < gridSize - 1; i++) {
-      for (let j = 0; j < gridSize - 1; j++) {
-        const a = i * gridSize + j;
-        const b = a + 1;
-        const c = a + gridSize;
-        const d = c + 1;
-        indices.push(a, b, d);
-        indices.push(a, d, c);
-      }
-    }
     geom.setIndex(indices);
     geom.computeVertexNormals();
+    
     return geom;
   }, [points, values]);
 
   return (
     <mesh geometry={geometry}>
-      <meshStandardMaterial color="skyblue" wireframe={false} />
+      <meshPhongMaterial 
+        color="skyblue" 
+        wireframe={false}
+        side={THREE.DoubleSide}
+        shininess={60}
+      />
     </mesh>
   );
 };
