@@ -83,16 +83,23 @@ const Header: React.FC = () => {
   <script type="application/ld+json">
     {JSON.stringify({
       "@context": "https://schema.org",
-      "@type": "WebApplication",
+      "@type": "SoftwareApplication",
       "name": "Curvature Calculator",
       "url": "https://itensor.online/",
-      "description": "A powerful tool for computing curvature tensors and metrics.",
-      "applicationCategory": "Science",
+      "description": "A powerful tool for computing curvature tensors, Ricci tensors, and Riemann metrics.",
+      "applicationCategory": "Calculator",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
       "creator": {
         "@type": "Person",
         "name": "Klaudiusz Sroka"
       }
-    })}
+    }
+    )}
   </script>
 </Helmet>
 
