@@ -66,11 +66,14 @@ const Header: React.FC = () => {
       <Helmet>
   <title>Curvature Calculator | Tensor Calculations Online</title>
   <meta name="description" content="A powerful online tool for calculating curvature tensors, Ricci tensors, and Riemann metrics." />
-  <meta name="keywords" content="curvature calculator, tensor calculator, Ricci tensor, Riemann tensor, metric tensor, differential geometry, tensor analysis" />
+  <meta name="keywords" content="curvature calculator, tensor calculator, 
+  Ricci tensor, Riemann tensor, metric tensor, differential geometry, tensor 
+  analysis, Christoffel symbols, Riemann curvature tensor, 
+  Ricci tensor, Einstein tensor, Kretschmann scalar" />
   <meta name="author" content="Klaudiusz Sroka" />
   <meta name="robots" content="index, follow" />
   <meta name="google-adsense-account" content="ca-pub-6565480842270630" />
-  <meta property="og:title" content="Curvature Calculator | Tensor Calculations Online" />
+  <meta property="og:title" content="Curvature Calculator | ITensor Tensor Calculations Online" />
   <meta property="og:description" content="Compute curvature tensors and Riemann metrics online. Ideal for physicists, mathematicians, and researchers." />
   <meta property="og:url" content="https://itensor.online/" />
   <meta property="og:type" content="website" />
