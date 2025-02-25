@@ -43,7 +43,7 @@ const Calculator: React.FC = () => {
           margin: "20px 0"
         }}
         data-ad-client="pub-6565480842270630"
-        data-ad-slot="1234567890"
+        data-ad-slot="5735748263"
         data-ad-format="auto"
         data-full-width-responsive="true"
       />

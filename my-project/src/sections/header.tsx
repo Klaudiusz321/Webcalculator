@@ -83,27 +83,7 @@ const Header: React.FC = () => {
   <meta name="twitter:description" content="A powerful tool for computing curvature tensors and metrics." />
   <meta name="twitter:image" content="https://itensor.online/images/curvature-calculator.png" />
   
-  <script type="application/ld+json">
-    {JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "Curvature Calculator",
-      "url": "https://itensor.online/",
-      "description": "A powerful tool for computing curvature tensors, Ricci tensors, and Riemann metrics.",
-      "applicationCategory": "Calculator",
-      "operatingSystem": "Web",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "creator": {
-        "@type": "Person",
-        "name": "Klaudiusz Sroka"
-      }
-    }
-    )}
-  </script>
+  
 </Helmet>
 
 
@@ -129,7 +109,7 @@ const Header: React.FC = () => {
                 "name": "Klaudiusz Sroka"
               }
             })}
-          </script>
+          </>
         </Helmet>
 
         {/* CONTENT SECTIONS */}
