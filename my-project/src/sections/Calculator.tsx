@@ -4,7 +4,7 @@ import MetricOutputForm from "../components/MetricOutputForm";
 import SampleMetrics from "../components/SampleMetrics";
 import Header from "./header";
 import DataImport from "../components/DataImport";
-import { Helmet } from 'react-helmet-async';
+
 import Scene from "./Scene";
 
 
@@ -20,11 +20,7 @@ const Calculator: React.FC = () => {
 
   return (
     <div className="min-h-screen p-4">
-      <Helmet>
-        <title>Tensor Calculator</title>
-        <meta name="description" content="Calculate tensor operations online" />
-        <meta name="google-adsense-account" content="ca-pub-6565480842270630" />
-      </Helmet>
+      
 
       <Header />
       <section style={inputSectionStyle}>

@@ -8,35 +8,60 @@ interface LatexDisplayProps {
 
 const LatexDisplay: React.FC<LatexDisplayProps> = ({ latexString }) => {
   try {
-    // Usuń zewnętrzne znaczniki \( \) jeśli istnieją
-    let cleanLatex = latexString.replace(/^\\\((.*)\\\)$/, '$1');
-    
-    // Zamień \left( na ( i \right) na )
+    // 1. Najpierw pobieramy oryginalny ciąg LaTeX, np.:
+    //    "g_{00} = \\(-1\\)"
+    //    "\\Gamma^{0}_{11} = \\(- \\frac{a{\\left(t \\right)} ..."
+
+    let cleanLatex = latexString.trim();
+
+    // 2. Jeśli jest wzór w stylu "coś = \\( ... \\)", to usuwamy część przed znakiem '='
+    //    aby pozostawić tylko samą część LaTeX wewnątrz \( ... \).
+    //    W niektórych przypadkach nie ma znaku "=", więc zabezpieczamy się przed tym.
+    if (cleanLatex.includes('=')) {
+      const parts = cleanLatex.split('=');
+      // Bierzemy ostatni fragment, gdyby było więcej niż jedno '='
+      cleanLatex = parts[parts.length - 1].trim();
+    }
+
+    // 3. Usuwamy początkowe "\\(" i końcowe "\\)", jeśli występują.
+    //    Regexy dość zachowawcze, żeby nie usuwać za dużo:
+    cleanLatex = cleanLatex
+      .replace(/^\\\(/, '')    // usuń na początku  "\("
+      .replace(/\\\)$/, '')    // usuń na końcu "\)"
+      .trim();
+
+    // 4. Zamieniamy np. "\\left(" i "\\right)" na zwykłe "(" i ")", jeśli chcesz unikać dynamicznego rozciągania.
+    //    Możesz usunąć ten fragment, jeśli wolisz zachować \left( i \right).
     cleanLatex = cleanLatex
       .replace(/\\left\(/g, '(')
-      .replace(/\\right\)/g, ')')
-      .replace(/\\frac/g, '\\frac');
+      .replace(/\\right\)/g, ')');
 
+    // 5. Renderujemy przez KaTeX
     const html = katex.renderToString(cleanLatex, {
       displayMode: true,
       throwOnError: false,
       trust: true,
       strict: false,
       macros: {
-        "\\chi": "\\chi",
-        "\\theta": "\\theta",
-        "\\phi": "\\phi"
+        // Dodaj tu makra, jeśli potrzebujesz
+        "\chi": "\chi",
+        "\theta": "\\theta",
+        "\phi": "\\phi",
+        "\Gamma": "\Gamma"
       }
     });
 
+    // 6. Zwracamy gotowy HTML, wstrzyknięty w <div>.
     return (
       <div 
         dangerouslySetInnerHTML={{ __html: html }}
         style={latexStyle}
       />
     );
+
   } catch (error) {
-    console.error('LaTeX error:', error);
+    console.error('LaTeX error:', error, 'for string:', latexString);
+    // W razie błędu wyświetlamy oryginalny tekst
     return <div style={latexStyle}>{latexString}</div>;
   }
 };

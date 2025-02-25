@@ -13,6 +13,8 @@ interface MetricOutputFormProps {
 }
 
 const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
+  console.log('MetricOutputForm received:', result);
+
   if (!result) {
     return <div style={sectionStyle}>No data available</div>;
   }
@@ -116,22 +118,7 @@ const sectionStyle: React.CSSProperties = {
   width: "100%",
   maxWidth: "100%",
   boxSizing: "border-box",
-};
-
-const subtitleStyle: React.CSSProperties = {
-  fontSize: "clamp(1.2rem, 4vw, 1.5rem)",
-  marginBottom: "clamp(0.75rem, 3vw, 1.5rem)",
-  borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-  paddingBottom: "0.5rem",
-  textAlign: "center",
-};
-
-const listStyle: React.CSSProperties = {
-  listStyle: "none",
-  padding: 0,
-  margin: "0 auto",
-  maxWidth: "100%",
-  textAlign: "center",
+  
 };
 
 const latexContainerStyle: React.CSSProperties = {
@@ -142,32 +129,6 @@ const latexContainerStyle: React.CSSProperties = {
   maxWidth: "100%",
   margin: "0 auto",
 };
-
-const mediaStyles = `
-  @media (max-width: 768px) {
-    .latex-grid {
-      grid-template-columns: 1fr !important;
-      padding: 0 !important;
-    }
-    
-    .latex-item {
-      font-size: 14px !important;
-      padding: 0.75rem !important;
-      margin: 0 auto !important;
-      max-width: 100% !important;
-      overflow-x: auto !important;
-    }
-    
-    li {
-      font-size: 14px;
-      margin-bottom: 0.5rem;
-    }
-    
-    .katex {
-      font-size: 1.1em !important;
-    }
-  }
-`;
 
 const latexItemStyle: React.CSSProperties = {
   padding: "clamp(0.75rem, 2vw, 1rem)",

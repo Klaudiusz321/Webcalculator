@@ -21,8 +21,10 @@ interface CurvatureSurfaceProps {
 }
 
 const CurvatureSurface: React.FC<CurvatureSurfaceProps> = ({ data }) => {
-  const { points, values } = data;
+  const { points, values, metadata } = data;
   
+  console.log('Received curvature data:', { points, values, metadata }); // debugging
+
   if (points.length !== values.length) {
     console.error('Liczba punktów nie odpowiada liczbie wartości!');
     return null;
@@ -31,13 +33,20 @@ const CurvatureSurface: React.FC<CurvatureSurfaceProps> = ({ data }) => {
   const geometry = useMemo(() => {
     const vertices = new Float32Array(points.length * 3);
     
+    // Normalizacja i skalowanie wartości krzywizny
+    const minVal = Math.min(...values);
+    const maxVal = Math.max(...values);
+    const scale = 2.0; // Współczynnik skalowania - możesz dostosować
+    
     // Przygotuj punkty 2D do triangulacji
     const points2D = points.map(p => [p[0], p[1]]);
     
-    // Stwórz vertices
+    // Stwórz vertices ze skalowaną krzywizną
     for (let i = 0; i < points.length; i++) {
       vertices[i * 3] = points[i][0];     // x
-      vertices[i * 3 + 1] = values[i];    // wysokość z krzywizny
+      // Normalizuj i skaluj wartość krzywizny
+      const normalizedValue = ((values[i] - minVal) / (maxVal - minVal) - 0.5) * scale;
+      vertices[i * 3 + 1] = normalizedValue;  // wysokość (znormalizowana krzywizna)
       vertices[i * 3 + 2] = points[i][1];  // y
     }
     
@@ -57,7 +66,7 @@ const CurvatureSurface: React.FC<CurvatureSurfaceProps> = ({ data }) => {
     <mesh geometry={geometry}>
       <meshPhongMaterial 
         color="skyblue" 
-        wireframe={false}
+        wireframe={true} // Zmień na true aby zobaczyć siatkę
         side={THREE.DoubleSide}
         shininess={60}
       />

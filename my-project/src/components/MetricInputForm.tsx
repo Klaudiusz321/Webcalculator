@@ -2,6 +2,12 @@ import React, { useState } from "react";
 import CalculateButton from "./CalculateButton";
 
 export interface MetricData {
+  metric: string[];
+  christoffel: string[];
+  riemann: string[];
+  ricci: string[];
+  einstein: string[];
+  scalar: string[];
   coordinates: string[];
   parameters: string[];
   metryka: { [key: string]: string };
