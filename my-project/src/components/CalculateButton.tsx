@@ -22,7 +22,7 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       setIsLoading(true);
       setError(null);
 
-      // Wywołaj endpoint calculate dla LaTeX
+      // Tylko endpoint calculate dla LaTeX
       const calculateResponse = await fetch('https://calculator1-fc4166db17b2.herokuapp.com/api/calculate', {
         method: "POST",
         headers: { 
@@ -36,29 +36,8 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
         throw new Error("Calculate API call failed");
       }
 
-      // Pobierz dane LaTeX
       const calculateData = await calculateResponse.json();
-
-      // Przekaż dane LaTeX do wyświetlenia
       onCalculate(calculateData);
-
-      // Wywołaj endpoint visualize dla wykresu (Scene.tsx go obsłuży)
-      const visualizeResponse = await fetch('https://calculator1-fc4166db17b2.herokuapp.com/api/visualize', {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify({ 
-          metric_text: input,
-          ranges: [[-5, 5], [-5, 5], [-5, 5]],
-          points_per_dim: 50
-        }),
-      });
-
-      if (!visualizeResponse.ok) {
-        throw new Error("Visualize API call failed");
-      }
 
     } catch (error: any) {
       setError("Server error. Please try again later.");
@@ -77,11 +56,7 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       >
         {isLoading ? "Calculating..." : "Calculate"}
       </button>
-      {error && (
-        <div style={errorStyle}>
-          {error}
-        </div>
-      )}
+      {error && <div style={errorStyle}>{error}</div>}
     </div>
   );
 };

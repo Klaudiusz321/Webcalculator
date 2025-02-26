@@ -13,18 +13,11 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, '')
-        },
-        '/api/visualize': {
-          target: 'https://calculator1-fc4166db17b2.herokuapp.com',
-          changeOrigin: true,
-          secure: false,
-          rewrite: (path) => path.replace(/^\/api/, '')
         }
       }
     },
     define: {
-      'import.meta.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL),
-      'import.meta.env.VITE_API_URL_VISUALIZE': JSON.stringify(env.VITE_API_URL_VISUALIZE)
+      'import.meta.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL)
     },
     build: {
       rollupOptions: {
