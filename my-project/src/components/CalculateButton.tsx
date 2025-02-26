@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { MetricData } from "./MetricInputForm";
 
+// Pobierz URL-e z zmiennych środowiskowych
+const CALCULATE_API_URL = import.meta.env.VITE_API_URL;
+const VISUALIZE_API_URL = import.meta.env.VITE_API_URL_VISUALIZE;
+
 interface CalculateButtonProps {
   input: string;
   onCalculate: (result: MetricData) => void;
@@ -20,16 +24,14 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       setIsLoading(true);
       setError(null);
 
-      // Równoległe wywołania do obu endpointów
+      // Użyj zmiennych środowiskowych zamiast zahardcodowanych URL-i
       const [calculateResponse, visualizeResponse] = await Promise.all([
-        // Wywołanie do /api/calculate dla danych symbolicznych
-        fetch('http://127.0.0.1:8000/api/calculate/', {
+        fetch(CALCULATE_API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ metric_text: input }),
         }),
-        // Wywołanie do /api/visualize dla wizualizacji
-        fetch('http://127.0.0.1:8000/api/visualize/', {
+        fetch(VISUALIZE_API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 
@@ -49,10 +51,9 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
         throw new Error("One of the API calls failed");
       }
 
-      // Łączymy dane z obu endpointów
       const combinedData = {
         ...calculateData,
-        plot: visualizeData.plot, // Dodajemy plot z /api/visualize
+        plot: visualizeData.plot,
         outputText: input
       };
 
