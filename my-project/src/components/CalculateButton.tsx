@@ -22,52 +22,44 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       setIsLoading(true);
       setError(null);
 
-      const [calculateResponse, visualizeResponse] = await Promise.all([
-        fetch('/api/calculate', {
-          method: "POST",
-          headers: { 
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: JSON.stringify({ 
-            metric_text: input 
-          }),
-        }),
-        fetch('/api/visualize', {
-          method: "POST",
-          headers: { 
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: JSON.stringify({ 
-            metric_text: input,
-            ranges: [[-5, 5], [-5, 5], [-5, 5]],
-            points_per_dim: 50,
-            coordinates: input.split('\n')[0].split(',').map(s => s.trim()),
-            parameters: input.split('\n')[1].split(',').map(s => s.trim())
-          }),
-        })
-      ]);
+      // Wywołaj endpoint calculate dla LaTeX
+      const calculateResponse = await fetch('https://calculator1-fc4166db17b2.herokuapp.com/api/calculate', {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ metric_text: input }),
+      });
 
       if (!calculateResponse.ok) {
-        throw new Error(`Calculate API error: ${calculateResponse.status}`);
+        throw new Error("Calculate API call failed");
       }
+
+      // Pobierz dane LaTeX
+      const calculateData = await calculateResponse.json();
+
+      // Przekaż dane LaTeX do wyświetlenia
+      onCalculate(calculateData);
+
+      // Wywołaj endpoint visualize dla wykresu (Scene.tsx go obsłuży)
+      const visualizeResponse = await fetch('https://calculator1-fc4166db17b2.herokuapp.com/api/visualize', {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ 
+          metric_text: input,
+          ranges: [[-5, 5], [-5, 5], [-5, 5]],
+          points_per_dim: 50
+        }),
+      });
+
       if (!visualizeResponse.ok) {
-        throw new Error(`Visualize API error: ${visualizeResponse.status}`);
+        throw new Error("Visualize API call failed");
       }
 
-      const [calculateData, visualizeData] = await Promise.all([
-        calculateResponse.json(),
-        visualizeResponse.json()
-      ]);
-
-      const combinedData = {
-        ...calculateData,
-        plot: visualizeData.plot,
-        outputText: input
-      };
-
-      onCalculate(combinedData);
     } catch (error: any) {
       setError("Server error. Please try again later.");
     } finally {
