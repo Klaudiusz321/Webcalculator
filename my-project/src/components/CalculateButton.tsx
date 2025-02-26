@@ -55,10 +55,8 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
 
       // Łączymy dane z obu endpointów
       const combinedData = {
-        // Dane symboliczne do MetricOutputForm
         ...calculateData,
-        // Dane numeryczne do wizualizacji
-        numerical: visualizeData.numerical,
+        plot: visualizeData.plot, // Dodajemy plot z /api/visualize
         outputText: input
       };
 
