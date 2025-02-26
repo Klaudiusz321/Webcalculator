@@ -30,26 +30,22 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       setIsLoading(true);
       setError(null);
 
-      console.log('Sending requests to:', {
-        calculate: CALCULATE_API_URL,
-        visualize: VISUALIZE_API_URL
-      });
-
+      // Używamy relatywnych ścieżek zamiast pełnych URL-i
       const [calculateResponse, visualizeResponse] = await Promise.all([
-        fetch(CALCULATE_API_URL, {
+        fetch('/api/calculate', {
           method: "POST",
           headers: { 
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Accept": "application/json"
           },
-          mode: 'no-cors',
           body: JSON.stringify({ metric_text: input }),
         }),
-        fetch(VISUALIZE_API_URL, {
+        fetch('/api/visualize', {
           method: "POST",
           headers: { 
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Accept": "application/json"
           },
-          mode: 'no-cors',
           body: JSON.stringify({ 
             metric_text: input,
             ranges: [[-5, 5], [-5, 5], [-5, 5]],
@@ -58,24 +54,25 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
         })
       ]);
 
-      console.log('Responses received:', {
-        calculate: calculateResponse.status,
-        visualize: visualizeResponse.status
-      });
-
-      const [calculateData, visualizeData] = await Promise.all([
-        calculateResponse.json(),
-        visualizeResponse.json()
-      ]);
-
-      if (!calculateResponse.ok || !visualizeResponse.ok) {
-        throw new Error(`API calls failed: Calculate (${calculateResponse.status}), Visualize (${visualizeResponse.status})`);
+      // Sprawdź status odpowiedzi
+      if (!calculateResponse.ok) {
+        throw new Error(`Calculate API error: ${calculateResponse.status}`);
+      }
+      if (!visualizeResponse.ok) {
+        throw new Error(`Visualize API error: ${visualizeResponse.status}`);
       }
 
-      console.log('Data received:', {
-        calculate: calculateData,
-        visualize: visualizeData
-      });
+      // Próbuj sparsować JSON tylko jeśli odpowiedź jest ok
+      const [calculateData, visualizeData] = await Promise.all([
+        calculateResponse.json().catch(e => {
+          console.error('Calculate JSON parse error:', e);
+          throw new Error('Invalid calculate response format');
+        }),
+        visualizeResponse.json().catch(e => {
+          console.error('Visualize JSON parse error:', e);
+          throw new Error('Invalid visualize response format');
+        })
+      ]);
 
       const combinedData = {
         ...calculateData,
@@ -86,7 +83,7 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       onCalculate(combinedData);
     } catch (error: any) {
       console.error("Calculation error:", error);
-      setError(error.message || "An error occurred");
+      setError(error.message || "Server error. Please try again later.");
     } finally {
       setIsLoading(false);
     }
