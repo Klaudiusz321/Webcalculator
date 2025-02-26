@@ -12,5 +12,9 @@ export default defineConfig({
         secure: false,
       },
     },
+    cors: true
   },
+  define: {
+    'process.env': process.env
+  }
 });

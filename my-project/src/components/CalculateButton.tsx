@@ -5,6 +5,12 @@ import { MetricData } from "./MetricInputForm";
 const CALCULATE_API_URL = import.meta.env.VITE_API_URL;
 const VISUALIZE_API_URL = import.meta.env.VITE_API_URL_VISUALIZE;
 
+// Dodaj logowanie URL-i
+console.log('API URLs:', {
+  calculate: CALCULATE_API_URL,
+  visualize: VISUALIZE_API_URL
+});
+
 interface CalculateButtonProps {
   input: string;
   onCalculate: (result: MetricData) => void;
@@ -24,16 +30,28 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       setIsLoading(true);
       setError(null);
 
-      // Użyj zmiennych środowiskowych zamiast zahardcodowanych URL-i
+      console.log('Sending requests to:', {
+        calculate: CALCULATE_API_URL,
+        visualize: VISUALIZE_API_URL
+      });
+
       const [calculateResponse, visualizeResponse] = await Promise.all([
         fetch(CALCULATE_API_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Access-Control-Allow-Origin": "*"
+          },
           body: JSON.stringify({ metric_text: input }),
         }),
         fetch(VISUALIZE_API_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Access-Control-Allow-Origin": "*"
+          },
           body: JSON.stringify({ 
             metric_text: input,
             ranges: [[-5, 5], [-5, 5], [-5, 5]],
@@ -42,14 +60,24 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
         })
       ]);
 
+      console.log('Responses received:', {
+        calculate: calculateResponse.status,
+        visualize: visualizeResponse.status
+      });
+
       const [calculateData, visualizeData] = await Promise.all([
         calculateResponse.json(),
         visualizeResponse.json()
       ]);
 
       if (!calculateResponse.ok || !visualizeResponse.ok) {
-        throw new Error("One of the API calls failed");
+        throw new Error(`API calls failed: Calculate (${calculateResponse.status}), Visualize (${visualizeResponse.status})`);
       }
+
+      console.log('Data received:', {
+        calculate: calculateData,
+        visualize: visualizeData
+      });
 
       const combinedData = {
         ...calculateData,
