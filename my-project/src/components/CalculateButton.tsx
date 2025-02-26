@@ -29,7 +29,9 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
             "Content-Type": "application/json",
             "Accept": "application/json"
           },
-          body: JSON.stringify({ metric_text: input }),
+          body: JSON.stringify({ 
+            metric_text: input 
+          }),
         }),
         fetch('/api/visualize', {
           method: "POST",
@@ -40,7 +42,9 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
           body: JSON.stringify({ 
             metric_text: input,
             ranges: [[-5, 5], [-5, 5], [-5, 5]],
-            points_per_dim: 50
+            points_per_dim: 50,
+            coordinates: input.split('\n')[0].split(',').map(s => s.trim()),
+            parameters: input.split('\n')[1].split(',').map(s => s.trim())
           }),
         })
       ]);
