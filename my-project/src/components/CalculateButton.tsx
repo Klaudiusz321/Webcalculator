@@ -39,19 +39,17 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
         fetch(CALCULATE_API_URL, {
           method: "POST",
           headers: { 
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Access-Control-Allow-Origin": "*"
+            "Content-Type": "application/json"
           },
+          mode: 'no-cors',
           body: JSON.stringify({ metric_text: input }),
         }),
         fetch(VISUALIZE_API_URL, {
           method: "POST",
           headers: { 
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Access-Control-Allow-Origin": "*"
+            "Content-Type": "application/json"
           },
+          mode: 'no-cors',
           body: JSON.stringify({ 
             metric_text: input,
             ranges: [[-5, 5], [-5, 5], [-5, 5]],
