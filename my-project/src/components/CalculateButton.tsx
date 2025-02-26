@@ -1,9 +1,5 @@
 import React, { useState } from "react";
 import { MetricData } from "./MetricInputForm";
-import { config } from '../utils/config';
-
-const API_URL = config.apiUrl;
-
 
 interface CalculateButtonProps {
   input: string;

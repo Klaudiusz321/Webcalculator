@@ -25,7 +25,18 @@ export interface MetricData {
   Gamma?: any[];
   R_abcd?: any[];
   Ricci?: any[];
-  
+  numerical?: {
+    points: number[][];
+    values: number[];
+    ranges: [number, number][];
+    metadata: {
+      dimensions: number;
+      coordinates: string[];
+      parameters: string[];
+      num_points: number;
+      value_range: [number, number];
+    };
+  };
 }
 
 interface MetricInputFormProps {
