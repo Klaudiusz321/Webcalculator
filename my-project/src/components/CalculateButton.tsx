@@ -30,7 +30,6 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       setIsLoading(true);
       setError(null);
 
-      // Używamy relatywnych ścieżek zamiast pełnych URL-i
       const [calculateResponse, visualizeResponse] = await Promise.all([
         fetch('/api/calculate', {
           method: "POST",
@@ -54,7 +53,6 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
         })
       ]);
 
-      // Sprawdź status odpowiedzi
       if (!calculateResponse.ok) {
         throw new Error(`Calculate API error: ${calculateResponse.status}`);
       }
@@ -62,16 +60,9 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
         throw new Error(`Visualize API error: ${visualizeResponse.status}`);
       }
 
-      // Próbuj sparsować JSON tylko jeśli odpowiedź jest ok
       const [calculateData, visualizeData] = await Promise.all([
-        calculateResponse.json().catch(e => {
-          console.error('Calculate JSON parse error:', e);
-          throw new Error('Invalid calculate response format');
-        }),
-        visualizeResponse.json().catch(e => {
-          console.error('Visualize JSON parse error:', e);
-          throw new Error('Invalid visualize response format');
-        })
+        calculateResponse.json(),
+        visualizeResponse.json()
       ]);
 
       const combinedData = {
@@ -82,8 +73,7 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
 
       onCalculate(combinedData);
     } catch (error: any) {
-      console.error("Calculation error:", error);
-      setError(error.message || "Server error. Please try again later.");
+      setError("Server error. Please try again later.");
     } finally {
       setIsLoading(false);
     }
