@@ -8,6 +8,35 @@ export interface MetricData {
   ricci: string[];
   einstein: string[];
   scalar: string[];
+  coordinates: string[];
+  parameters: string[];
+  metryka: { [key: string]: string };
+  scalarCurvature: string;
+  scalarCurvatureLatex: string;
+  christoffelLatex: string[];
+  riemannLatex: string[];
+  ricciLatex: string[];
+  einsteinLatex: string[];
+  outputText?: string;
+  plotImage?: string;
+  plot?: string;
+  // Dodane pola dla danych tensorowych
+  g?: any[];
+  Gamma?: any[];
+  R_abcd?: any[];
+  Ricci?: any[];
+  numerical?: {
+    points: number[][];
+    values: number[];
+    ranges: [number, number][];
+    metadata: {
+      dimensions: number;
+      coordinates: string[];
+      parameters: string[];
+      num_points: number;
+      value_range: [number, number];
+    };
+  };
 }
 
 interface MetricInputFormProps {
@@ -15,13 +44,18 @@ interface MetricInputFormProps {
 }
 
 const MetricInputForm: React.FC<MetricInputFormProps> = ({ onResult }) => {
-  const [inputText, setInputText] = useState<string>(
-`t,chi,theta,phi
-a,k
-g_{00} = -1
-g_{11} = a(t)^2/(1 - k*chi^2)
-g_{22} = a(t)^2*chi^2
-g_{33} = a(t)^2*chi^2*sin(theta)^2`);
+  const [inputText, setInputText] = useState<string>("");
+
+  const filterNonZeroResults = (data: MetricData): MetricData => {
+    const filterNonZero = (arr: any[] | undefined) => arr ? arr.filter(item => item !== 0) : [];
+    return {
+      ...data,
+      g: filterNonZero(data.g),
+      Gamma: filterNonZero(data.Gamma),
+      R_abcd: filterNonZero(data.R_abcd),
+      Ricci: filterNonZero(data.Ricci),
+    };
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,9 +66,13 @@ g_{33} = a(t)^2*chi^2*sin(theta)^2`);
         body: JSON.stringify({ metric_text: inputText }),
       });
       const data = await response.json();
-      onResult(data);
-    } catch (error) {
-      console.error("Error:", error);
+      if (!response.ok) {
+        throw new Error(data.detail || "Error");
+      }
+      const filteredData = filterNonZeroResults(data);
+      onResult(filteredData);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -45,13 +83,11 @@ g_{33} = a(t)^2*chi^2*sin(theta)^2`);
         onChange={(e) => setInputText(e.target.value)}
         rows={10}
         style={textareaStyle}
-        placeholder={`Format:
-t,chi,theta,phi
-a,k
-g_{00} = -1
-g_{11} = a(t)^2/(1 - k*chi^2)
-g_{22} = a(t)^2*chi^2
-g_{33} = a(t)^2*chi^2*sin(theta)^2`}
+        placeholder={`Example:
+x, y ; a, tau, psi, theta, phi
+0 0 -c**2
+1 1 a(t)**2/(-k*psi**2+1)
+...`}
       />
       <CalculateButton input={inputText} onCalculate={(res: MetricData) => onResult(res)} />
     </form>
