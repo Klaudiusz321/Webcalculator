@@ -1,20 +1,17 @@
 // frontend/vite.config.ts
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    proxy: {
-      "/api": {
-        target: "https://calculator1-fc4166db17b2.herokuapp.com/api/calculate", // adres Twojego backendu
-        changeOrigin: true,
-        secure: false,
-      },
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  return {
+    plugins: [react()],
+    server: {
+      cors: true
     },
-    cors: true
-  },
-  define: {
-    'process.env': process.env
-  }
+    define: {
+      'import.meta.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL),
+      'import.meta.env.VITE_API_URL_VISUALIZE': JSON.stringify(env.VITE_API_URL_VISUALIZE)
+    }
+  };
 });
