@@ -9,13 +9,13 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/api/calculate': {
-          target: 'https://tensor-calculator-cbcf2141c885.herokuapp.com',
+          target: 'https://calculator1-fc4166db17b2.herokuapp.com',
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, '')
         },
         '/api/visualize': {
-          target: 'https://tensor-calculator-cbcf2141c885.herokuapp.com',
+          target: 'https://calculator1-fc4166db17b2.herokuapp.com',
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, '')

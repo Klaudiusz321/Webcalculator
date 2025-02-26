@@ -16,7 +16,7 @@ const DataImport: React.FC = () => {
     formData.append("dataFile", file);
 
     try {
-      const response = await fetch("http://localhost:8000/api/import", {
+      const response = await fetch("https://calculator1-fc4166db17b2.herokuapp.com/api/import", {
         method: "POST",
         body: formData,
       });
