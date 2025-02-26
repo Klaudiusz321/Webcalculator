@@ -2,14 +2,6 @@ import React, { useState } from "react";
 import { MetricData } from "./MetricInputForm";
 
 // Pobierz URL-e z zmiennych środowiskowych
-const CALCULATE_API_URL = import.meta.env.VITE_API_URL || 'https://tensor-calculator-cbcf2141c885.herokuapp.com/api/calculate';
-const VISUALIZE_API_URL = import.meta.env.VITE_API_URL_VISUALIZE || 'https://tensor-calculator-cbcf2141c885.herokuapp.com/api/visualize';
-
-console.log('Environment:', import.meta.env);
-console.log('API URLs:', {
-  calculate: CALCULATE_API_URL,
-  visualize: VISUALIZE_API_URL
-});
 
 interface CalculateButtonProps {
   input: string;
