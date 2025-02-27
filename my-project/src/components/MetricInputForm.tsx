@@ -21,7 +21,7 @@ export interface MetricData {
   Gamma?: any[];
   R_abcd?: any[];
   Ricci?: any[];
-  Weyl?: any[];
+  Weyl: string[];
   
 }
 
