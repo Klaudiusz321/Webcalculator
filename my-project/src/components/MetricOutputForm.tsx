@@ -3,45 +3,31 @@ import LatexDisplay from "./LatexDisplay";
 
 interface MetricOutputFormProps {
   result: {
-    coordinates: string[];
-    parameters: string[];
     metric: string[];
     christoffel: string[];
     riemann: string[];
     ricci: string[];
     einstein: string[];
     scalar: string[];
+    Weyl: string[];
   };
 }
 
 const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
+  console.log('MetricOutputForm received:', result);
+
   if (!result) {
-    return <div style={sectionStyle}>Brak dostępnych danych</div>;
+    return <div style={sectionStyle}>No data available</div>;
   }
 
   return (
     <div style={containerStyle}>
-      {/* Współrzędne i Parametry */}
+      {/* Metryka */}
       <section style={sectionStyle}>
-        <h3 style={titleStyle}>Współrzędne i Parametry</h3>
-        <div style={latexContainerStyle}>
-          <div style={latexItemStyle}>
-            <strong>Współrzędne:</strong> {result.coordinates.join(", ")}
-          </div>
-          {result.parameters.length > 0 && (
-            <div style={latexItemStyle}>
-              <strong>Parametry:</strong> {result.parameters.join(", ")}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Komponenty Metryki */}
-      <section style={sectionStyle}>
-        <h3 style={titleStyle}>Komponenty Metryki</h3>
+        <h3 style={titleStyle}>Metric Components</h3>
         <div style={latexContainerStyle}>
           {result.metric?.map((latex, index) => (
-            <div key={`metric-${index}`} style={latexItemStyle}>
+            <div key={index} style={latexItemStyle}>
               <LatexDisplay latexString={latex} />
             </div>
           ))}
@@ -50,10 +36,10 @@ const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
 
       {/* Symbole Christoffela */}
       <section style={sectionStyle}>
-        <h3 style={titleStyle}>Symbole Christoffela</h3>
+        <h3 style={titleStyle}>Christoffel Symbols</h3>
         <div style={latexContainerStyle}>
           {result.christoffel?.map((latex, index) => (
-            <div key={`christoffel-${index}`} style={latexItemStyle}>
+            <div key={index} style={latexItemStyle}>
               <LatexDisplay latexString={latex} />
             </div>
           ))}
@@ -62,10 +48,10 @@ const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
 
       {/* Tensor Riemanna */}
       <section style={sectionStyle}>
-        <h3 style={titleStyle}>Tensor Riemanna</h3>
+        <h3 style={titleStyle}>Riemann Tensor</h3>
         <div style={latexContainerStyle}>
           {result.riemann?.map((latex, index) => (
-            <div key={`riemann-${index}`} style={latexItemStyle}>
+            <div key={index} style={latexItemStyle}>
               <LatexDisplay latexString={latex} />
             </div>
           ))}
@@ -74,10 +60,10 @@ const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
 
       {/* Tensor Ricciego */}
       <section style={sectionStyle}>
-        <h3 style={titleStyle}>Tensor Ricciego</h3>
+        <h3 style={titleStyle}>Ricci Tensor</h3>
         <div style={latexContainerStyle}>
           {result.ricci?.map((latex, index) => (
-            <div key={`ricci-${index}`} style={latexItemStyle}>
+            <div key={index} style={latexItemStyle}>
               <LatexDisplay latexString={latex} />
             </div>
           ))}
@@ -86,22 +72,32 @@ const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
 
       {/* Tensor Einsteina */}
       <section style={sectionStyle}>
-        <h3 style={titleStyle}>Tensor Einsteina</h3>
+        <h3 style={titleStyle}>Einstein Tensor</h3>
         <div style={latexContainerStyle}>
           {result.einstein?.map((latex, index) => (
-            <div key={`einstein-${index}`} style={latexItemStyle}>
+            <div key={index} style={latexItemStyle}>
               <LatexDisplay latexString={latex} />
             </div>
           ))}
         </div>
       </section>
 
-      {/* Krzywizna Skalarna */}
+      {/* Krzywizna skalarna */}
       <section style={sectionStyle}>
-        <h3 style={titleStyle}>Krzywizna Skalarna</h3>
+        <h3 style={titleStyle}>Scalar Curvature</h3>
         <div style={latexContainerStyle}>
           {result.scalar?.map((latex, index) => (
-            <div key={`scalar-${index}`} style={latexItemStyle}>
+            <div key={index} style={latexItemStyle}>
+              <LatexDisplay latexString={latex} />
+            </div>
+          ))}
+        </div>
+      </section>
+      <section style={sectionStyle}>
+        <h3 style={titleStyle}>Weyl symbol</h3>
+        <div style={latexContainerStyle}>
+          {result.Weyl?.map((latex, index) => (
+            <div key={index} style={latexItemStyle}>
               <LatexDisplay latexString={latex} />
             </div>
           ))}
@@ -112,42 +108,50 @@ const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
 };
 
 const containerStyle: React.CSSProperties = {
-  padding: "1rem",
+  padding: "clamp(1rem, 4vw, 2rem)",
   maxWidth: "1400px",
   margin: "0 auto",
-  backgroundColor: "#1a1a1a",
-  borderRadius: "8px",
 };
 
 const titleStyle: React.CSSProperties = {
-  fontSize: "1.5rem",
-  marginBottom: "1rem",
-  color: "white",
+  fontSize: "clamp(1.5rem, 5vw, 2rem)",
+  marginBottom: "clamp(1rem, 4vw, 2rem)",
   textAlign: "center",
 };
 
 const sectionStyle: React.CSSProperties = {
-  marginBottom: "2rem",
-  padding: "1rem",
+  marginBottom: "clamp(1rem, 4vw, 2rem)",
+  padding: "clamp(1rem, 3vw, 1.5rem)",
   borderRadius: "8px",
-  backgroundColor: "#242424",
+  backgroundColor: "#1a1a1a",
   border: "1px solid rgba(255, 255, 255, 0.1)",
+  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+  width: "100%",
+  maxWidth: "100%",
+  boxSizing: "border-box",
+  
 };
 
 const latexContainerStyle: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-  gap: "1rem",
-  padding: "1rem",
+  gap: "clamp(0.5rem, 2vw, 1rem)",
+  gridTemplateColumns: "repeat(2, 1fr)",
+  width: "100%",
+  maxWidth: "100%",
+  margin: "0 auto",
 };
 
 const latexItemStyle: React.CSSProperties = {
-  padding: "1rem",
-  backgroundColor: "#2a2a2a",
+  padding: "clamp(0.75rem, 2vw, 1rem)",
   borderRadius: "4px",
-  color: "white",
-  fontSize: "0.9rem",
-  overflow: "auto",
+  backgroundColor: "#242424",
+  overflowX: "auto",
+  border: "1px solid rgba(255, 255, 255, 0.05)",
+  transition: "background-color 0.2s ease",
+  cursor: "pointer",
+  margin: "0 auto",
+  width: "100%",
+  boxSizing: "border-box",
 };
 
 export default MetricOutputForm;
