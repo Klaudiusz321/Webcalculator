@@ -3,14 +3,14 @@ import LatexDisplay from "./LatexDisplay";
 
 interface MetricOutputFormProps {
   result: {
-    coordinates: string[];
-    parameters: string[];
-    metric: string[];
-    christoffel: string[];
-    riemann: string[];
-    ricci: string[];
-    einstein: string[];
-    scalar: string[];
+    coordinates?: string[];
+    parameters?: string[];
+    metric?: string[];
+    christoffel?: string[];
+    riemann?: string[];
+    ricci?: string[];
+    einstein?: string[];
+    scalar?: string[];
   };
 }
 
@@ -25,10 +25,12 @@ const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
       <section style={sectionStyle}>
         <h3 style={titleStyle}>Współrzędne i Parametry</h3>
         <div style={latexContainerStyle}>
-          <div style={latexItemStyle}>
-            <strong>Współrzędne:</strong> {result.coordinates.join(", ")}
-          </div>
-          {result.parameters.length > 0 && (
+          {result.coordinates && result.coordinates.length > 0 && (
+            <div style={latexItemStyle}>
+              <strong>Współrzędne:</strong> {result.coordinates.join(", ")}
+            </div>
+          )}
+          {result.parameters && result.parameters.length > 0 && (
             <div style={latexItemStyle}>
               <strong>Parametry:</strong> {result.parameters.join(", ")}
             </div>
@@ -37,76 +39,88 @@ const MetricOutputForm: React.FC<MetricOutputFormProps> = ({ result }) => {
       </section>
 
       {/* Komponenty Metryki */}
-      <section style={sectionStyle}>
-        <h3 style={titleStyle}>Komponenty Metryki</h3>
-        <div style={latexContainerStyle}>
-          {result.metric?.map((latex, index) => (
-            <div key={`metric-${index}`} style={latexItemStyle}>
-              <LatexDisplay latexString={latex} />
-            </div>
-          ))}
-        </div>
-      </section>
+      {result.metric && result.metric.length > 0 && (
+        <section style={sectionStyle}>
+          <h3 style={titleStyle}>Komponenty Metryki</h3>
+          <div style={latexContainerStyle}>
+            {result.metric.map((latex, index) => (
+              <div key={`metric-${index}`} style={latexItemStyle}>
+                <LatexDisplay latexString={latex} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Symbole Christoffela */}
-      <section style={sectionStyle}>
-        <h3 style={titleStyle}>Symbole Christoffela</h3>
-        <div style={latexContainerStyle}>
-          {result.christoffel?.map((latex, index) => (
-            <div key={`christoffel-${index}`} style={latexItemStyle}>
-              <LatexDisplay latexString={latex} />
-            </div>
-          ))}
-        </div>
-      </section>
+      {result.christoffel && result.christoffel.length > 0 && (
+        <section style={sectionStyle}>
+          <h3 style={titleStyle}>Symbole Christoffela</h3>
+          <div style={latexContainerStyle}>
+            {result.christoffel.map((latex, index) => (
+              <div key={`christoffel-${index}`} style={latexItemStyle}>
+                <LatexDisplay latexString={latex} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Tensor Riemanna */}
-      <section style={sectionStyle}>
-        <h3 style={titleStyle}>Tensor Riemanna</h3>
-        <div style={latexContainerStyle}>
-          {result.riemann?.map((latex, index) => (
-            <div key={`riemann-${index}`} style={latexItemStyle}>
-              <LatexDisplay latexString={latex} />
-            </div>
-          ))}
-        </div>
-      </section>
+      {result.riemann && result.riemann.length > 0 && (
+        <section style={sectionStyle}>
+          <h3 style={titleStyle}>Tensor Riemanna</h3>
+          <div style={latexContainerStyle}>
+            {result.riemann.map((latex, index) => (
+              <div key={`riemann-${index}`} style={latexItemStyle}>
+                <LatexDisplay latexString={latex} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Tensor Ricciego */}
-      <section style={sectionStyle}>
-        <h3 style={titleStyle}>Tensor Ricciego</h3>
-        <div style={latexContainerStyle}>
-          {result.ricci?.map((latex, index) => (
-            <div key={`ricci-${index}`} style={latexItemStyle}>
-              <LatexDisplay latexString={latex} />
-            </div>
-          ))}
-        </div>
-      </section>
+      {result.ricci && result.ricci.length > 0 && (
+        <section style={sectionStyle}>
+          <h3 style={titleStyle}>Tensor Ricciego</h3>
+          <div style={latexContainerStyle}>
+            {result.ricci.map((latex, index) => (
+              <div key={`ricci-${index}`} style={latexItemStyle}>
+                <LatexDisplay latexString={latex} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Tensor Einsteina */}
-      <section style={sectionStyle}>
-        <h3 style={titleStyle}>Tensor Einsteina</h3>
-        <div style={latexContainerStyle}>
-          {result.einstein?.map((latex, index) => (
-            <div key={`einstein-${index}`} style={latexItemStyle}>
-              <LatexDisplay latexString={latex} />
-            </div>
-          ))}
-        </div>
-      </section>
+      {result.einstein && result.einstein.length > 0 && (
+        <section style={sectionStyle}>
+          <h3 style={titleStyle}>Tensor Einsteina</h3>
+          <div style={latexContainerStyle}>
+            {result.einstein.map((latex, index) => (
+              <div key={`einstein-${index}`} style={latexItemStyle}>
+                <LatexDisplay latexString={latex} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Krzywizna Skalarna */}
-      <section style={sectionStyle}>
-        <h3 style={titleStyle}>Krzywizna Skalarna</h3>
-        <div style={latexContainerStyle}>
-          {result.scalar?.map((latex, index) => (
-            <div key={`scalar-${index}`} style={latexItemStyle}>
-              <LatexDisplay latexString={latex} />
-            </div>
-          ))}
-        </div>
-      </section>
+      {result.scalar && result.scalar.length > 0 && (
+        <section style={sectionStyle}>
+          <h3 style={titleStyle}>Krzywizna Skalarna</h3>
+          <div style={latexContainerStyle}>
+            {result.scalar.map((latex, index) => (
+              <div key={`scalar-${index}`} style={latexItemStyle}>
+                <LatexDisplay latexString={latex} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 };

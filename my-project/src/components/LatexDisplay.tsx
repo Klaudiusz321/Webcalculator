@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'katex/dist/katex.min.css';
 import katex from 'katex';
 
@@ -7,9 +7,14 @@ interface LatexDisplayProps {
 }
 
 const LatexDisplay: React.FC<LatexDisplayProps> = ({ latexString }) => {
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
+    if (!latexString) return;
+
     try {
-      const element = document.getElementById(`latex-${latexString}`);
+      const elementId = `latex-${btoa(latexString).replace(/[^a-zA-Z0-9]/g, '')}`;
+      const element = document.getElementById(elementId);
       if (element) {
         katex.render(latexString, element, {
           throwOnError: false,
@@ -21,16 +26,31 @@ const LatexDisplay: React.FC<LatexDisplayProps> = ({ latexString }) => {
       }
     } catch (error) {
       console.error('Error rendering LaTeX:', error);
+      setError('Błąd renderowania wyrażenia LaTeX');
     }
   }, [latexString]);
 
-  return <div id={`latex-${latexString}`} style={latexStyle} />;
+  if (!latexString) return null;
+  if (error) return <div style={errorStyle}>{error}</div>;
+
+  return (
+    <div 
+      id={`latex-${btoa(latexString).replace(/[^a-zA-Z0-9]/g, '')}`} 
+      style={latexStyle} 
+    />
+  );
 };
 
 const latexStyle: React.CSSProperties = {
   overflow: 'auto',
   maxWidth: '100%',
   margin: '0.5rem 0',
+};
+
+const errorStyle: React.CSSProperties = {
+  color: '#ff6b6b',
+  fontSize: '0.9rem',
+  padding: '0.5rem',
 };
 
 export default LatexDisplay;
