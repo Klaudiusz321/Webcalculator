@@ -17,26 +17,12 @@ export interface MetricData {
   riemannLatex: string[];
   ricciLatex: string[];
   einsteinLatex: string[];
-  outputText?: string;
-  plotImage?: string;
-  plot?: string;
-  // Dodane pola dla danych tensorowych
   g?: any[];
   Gamma?: any[];
   R_abcd?: any[];
   Ricci?: any[];
-  numerical?: {
-    points: number[][];
-    values: number[];
-    ranges: [number, number][];
-    metadata: {
-      dimensions: number;
-      coordinates: string[];
-      parameters: string[];
-      num_points: number;
-      value_range: [number, number];
-    };
-  };
+  Weyl?: any[];
+  
 }
 
 interface MetricInputFormProps {
@@ -54,6 +40,7 @@ const MetricInputForm: React.FC<MetricInputFormProps> = ({ onResult }) => {
       Gamma: filterNonZero(data.Gamma),
       R_abcd: filterNonZero(data.R_abcd),
       Ricci: filterNonZero(data.Ricci),
+      Weyl: filterNonZero(data.Weyl),
     };
   };
 
