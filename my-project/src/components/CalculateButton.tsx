@@ -49,7 +49,7 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
           }
           break;
         case 'FAILURE':
-          displayError(data.error || "Zadanie zakończone niepowodzeniem");
+          displayError(data.error || "Error");
           return true;
         case 'PENDING':
           // Kontynuuj polling
@@ -57,8 +57,8 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       }
       return false;
     } catch (err) {
-      console.error("Błąd podczas sprawdzania statusu:", err);
-      displayError("Błąd podczas sprawdzania statusu zadania");
+      console.error("Error during task status check:", err);
+      displayError("Error during task status check");
       return true;
     }
   };
@@ -73,7 +73,7 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
 
   const handleClick = async () => {
     if (!input.trim()) {
-      setError("Proszę wprowadzić dane metryki");
+      setError("Enter metric data");
       return;
     }
 
@@ -92,7 +92,7 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       });
 
       if (!calculateResponse.ok) {
-        throw new Error("Błąd podczas inicjowania obliczeń");
+        throw new Error("Error calculating");
       }
 
       const calculateData = await calculateResponse.json();
@@ -116,7 +116,7 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
 
     } catch (error: any) {
       console.error(error);
-      displayError("Błąd serwera. Spróbuj ponownie później.");
+      displayError("Server error. Please try again later.");
       setIsLoading(false);
     }
   };
@@ -133,13 +133,13 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
           cursor: isLoading ? 'not-allowed' : 'pointer'
         }}
       >
-        {isLoading ? "Obliczanie..." : "Oblicz"}
+        {isLoading ? "Calculating..." : "Calculate"}
       </button>
       {error && <div style={errorStyle}>{error}</div>}
       {isLoading && (
         <div style={loadingContainerStyle}>
           <div style={loadingStyle}>
-            Obliczanie... {taskProgress > 0 && `(${taskProgress}%)`}
+            Calculating... {taskProgress > 0 && `(${taskProgress}%)`}
           </div>
           {taskProgress > 0 && (
             <div style={progressBarContainerStyle}>
