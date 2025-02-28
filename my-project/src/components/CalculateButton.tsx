@@ -1,28 +1,87 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MetricData } from "./MetricInputForm";
-
-// Pobierz URL-e z zmiennych środowiskowych
 
 interface CalculateButtonProps {
   input: string;
   onCalculate: (result: MetricData) => void;
 }
 
+interface TaskStatus {
+  state: 'PENDING' | 'SUCCESS' | 'FAILURE';
+  result?: MetricData;
+  error?: string;
+  progress?: number;
+}
+
 const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentInterval, setCurrentInterval] = useState<NodeJS.Timeout | null>(null);
+  const [taskProgress, setTaskProgress] = useState<number>(0);
+
+  const displayResult = (result: MetricData) => {
+    console.log("Otrzymano wyniki:", result);
+    onCalculate(result);
+    setTaskProgress(100);
+  };
+
+  const displayError = (errorMessage: string) => {
+    setError(errorMessage);
+    setTaskProgress(0);
+  };
+
+  const pollTaskStatus = async (taskId: string) => {
+    try {
+      const response = await fetch(`https://calculator1-fc4166db17b2.herokuapp.com/api/task_status/${taskId}/`);
+      const data: TaskStatus = await response.json();
+      console.log("Status zadania:", data);
+
+      // Aktualizuj progress jeśli jest dostępny
+      if (data.progress) {
+        setTaskProgress(data.progress);
+      }
+
+      switch (data.state) {
+        case 'SUCCESS':
+          if (data.result) {
+            displayResult(data.result);
+            return true;
+          }
+          break;
+        case 'FAILURE':
+          displayError(data.error || "Zadanie zakończone niepowodzeniem");
+          return true;
+        case 'PENDING':
+          // Kontynuuj polling
+          return false;
+      }
+      return false;
+    } catch (err) {
+      console.error("Błąd podczas sprawdzania statusu:", err);
+      displayError("Błąd podczas sprawdzania statusu zadania");
+      return true;
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (currentInterval) {
+        clearInterval(currentInterval);
+      }
+    };
+  }, [currentInterval]);
 
   const handleClick = async () => {
     if (!input.trim()) {
-      setError("Please enter metric data");
+      setError("Proszę wprowadzić dane metryki");
       return;
     }
 
     try {
       setIsLoading(true);
       setError(null);
+      setTaskProgress(0);
 
-      // Tylko endpoint calculate dla LaTeX
       const calculateResponse = await fetch('https://calculator1-fc4166db17b2.herokuapp.com/api/calculate', {
         method: "POST",
         headers: { 
@@ -33,30 +92,67 @@ const CalculateButton: React.FC<CalculateButtonProps> = ({ input, onCalculate })
       });
 
       if (!calculateResponse.ok) {
-        throw new Error("Calculate API call failed");
+        throw new Error("Błąd podczas inicjowania obliczeń");
       }
 
       const calculateData = await calculateResponse.json();
-      onCalculate(calculateData);
+      const taskId = calculateData.task_id;
+      console.log("Otrzymane task_id:", taskId);
+
+      // Natychmiast sprawdź status po otrzymaniu task_id
+      await pollTaskStatus(taskId);
+
+      // Ustaw interwał do regularnego sprawdzania
+      const intervalId = setInterval(async () => {
+        const finished = await pollTaskStatus(taskId);
+        if (finished) {
+          clearInterval(intervalId);
+          setCurrentInterval(null);
+          setIsLoading(false);
+        }
+      }, 5000);
+
+      setCurrentInterval(intervalId);
 
     } catch (error: any) {
-      setError("Server error. Please try again later.");
-    } finally {
+      console.error(error);
+      displayError("Błąd serwera. Spróbuj ponownie później.");
       setIsLoading(false);
     }
   };
-  
+
   return (
     <div style={containerStyle}>
       <button
         type="button"
         onClick={handleClick}
         disabled={isLoading}
-        style={buttonStyle}
+        style={{
+          ...buttonStyle,
+          opacity: isLoading ? 0.7 : 1,
+          cursor: isLoading ? 'not-allowed' : 'pointer'
+        }}
       >
-        {isLoading ? "Calculating..." : "Calculate"}
+        {isLoading ? "Obliczanie..." : "Oblicz"}
       </button>
       {error && <div style={errorStyle}>{error}</div>}
+      {isLoading && (
+        <div style={loadingContainerStyle}>
+          <div style={loadingStyle}>
+            Obliczanie... {taskProgress > 0 && `(${taskProgress}%)`}
+          </div>
+          {taskProgress > 0 && (
+            <div style={progressBarContainerStyle}>
+              <div 
+                style={{
+                  ...progressBarStyle,
+                  width: `${taskProgress}%`
+                }}
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
@@ -75,11 +171,9 @@ const buttonStyle: React.CSSProperties = {
   color: "white",
   border: "1px solid rgba(255, 255, 255, 0.1)",
   borderRadius: "4px",
-  cursor: "pointer",
   fontSize: "1rem",
   width: "100%",
   transition: "all 0.2s ease",
-  opacity: 1,
 };
 
 const errorStyle: React.CSSProperties = {
@@ -87,6 +181,35 @@ const errorStyle: React.CSSProperties = {
   fontSize: "0.9rem",
   textAlign: "center",
   marginTop: "0.5rem",
+};
+
+const loadingContainerStyle: React.CSSProperties = {
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.5rem',
+  alignItems: 'center',
+};
+
+const loadingStyle: React.CSSProperties = {
+  color: "#4CAF50",
+  fontSize: "0.9rem",
+  textAlign: "center",
+  marginTop: "0.5rem",
+};
+
+const progressBarContainerStyle: React.CSSProperties = {
+  width: '100%',
+  height: '4px',
+  backgroundColor: '#2a2a2a',
+  borderRadius: '2px',
+  overflow: 'hidden',
+};
+
+const progressBarStyle: React.CSSProperties = {
+  height: '100%',
+  backgroundColor: '#4CAF50',
+  transition: 'width 0.3s ease',
 };
 
 export default CalculateButton;
