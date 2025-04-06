@@ -87,7 +87,7 @@ const PrivacyPolicy: React.FC = () => {
             If you have any questions or concerns about this Privacy Policy, please contact us at:
           </p>
           <ul>
-            <li>By email: contact@example.com</li>
+            <li>By email: claudiuswebdesign@gmail.com</li>
           </ul>
         </section>
       </div>
