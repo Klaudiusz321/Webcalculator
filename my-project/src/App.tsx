@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Calculator from "./sections/Calculator";
+import PrivacyPolicy from "./sections/PrivacyPolicy";
 import Footer from "./components/Footer";
 
 import { Helmet, HelmetProvider } from 'react-helmet-async';
@@ -42,29 +44,34 @@ function App() {
 
   return (
     <HelmetProvider>
-      <div className="App">
-        {/* Komunikat, jeśli wykryto blokadę reklam */}
-        {isAdBlocked && (
-          <div style={{
-            padding: '10px',
-            backgroundColor: '#fff3cd',
-            color: '#856404',
-            textAlign: 'center',
-            margin: '10px 0'
-          }}>
-            Wykryto blokadę reklam. Aby zobaczyć reklamy, wyłącz blokowanie reklam dla tej strony.
-          </div>
-        )}
-        <Helmet>
-          <title>My Calculator App</title>
-        </Helmet>
-        
-        <Calculator />
-        
-        <AdSenseAd />
-        
-        <Footer />
-      </div>
+      <Router>
+        <div className="App">
+          {/* Komunikat, jeśli wykryto blokadę reklam */}
+          {isAdBlocked && (
+            <div style={{
+              padding: '10px',
+              backgroundColor: '#fff3cd',
+              color: '#856404',
+              textAlign: 'center',
+              margin: '10px 0'
+            }}>
+              Wykryto blokadę reklam. Aby zobaczyć reklamy, wyłącz blokowanie reklam dla tej strony.
+            </div>
+          )}
+          <Helmet>
+            <title>My Calculator App</title>
+          </Helmet>
+          
+          <Routes>
+            <Route path="/" element={<Calculator />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          </Routes>
+          
+          <AdSenseAd />
+          
+          <Footer />
+        </div>
+      </Router>
     </HelmetProvider>
   );
 }
